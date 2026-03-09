@@ -1,230 +1,1662 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AnimeHub | Anime Önerileri</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroPlay Studio | AI Game Experience</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0d1729;
+      --panel: rgba(11, 21, 38, 0.78);
+      --panel-strong: rgba(9, 18, 32, 0.95);
+      --line: rgba(125, 179, 255, 0.16);
+      --text: #eef4ff;
+      --muted: #9eb4d2;
+      --primary: #6ea8ff;
+      --primary-2: #73f0ff;
+      --success: #8dffb1;
+      --warning: #ffd76e;
+      --danger: #ff8f8f;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max-width: 1320px;
+    }
 
-<style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,Arial;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-body{
-background:#0f172a;
-color:white;
-}
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(115, 240, 255, 0.11), transparent 34%),
+        radial-gradient(circle at top right, rgba(110, 168, 255, 0.12), transparent 26%),
+        linear-gradient(180deg, #040b15 0%, var(--bg) 48%, #030914 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-/* HEADER */
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(80px);
+      opacity: 0.75;
+    }
 
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px 40px;
-background:#020617;
-border-bottom:1px solid #1e293b;
-}
+    body::before {
+      width: 360px;
+      height: 360px;
+      background: rgba(110, 168, 255, 0.16);
+      top: -100px;
+      right: -40px;
+      border-radius: 50%;
+    }
 
-.logo{
-font-size:26px;
-font-weight:bold;
-color:#38bdf8;
-}
+    body::after {
+      width: 360px;
+      height: 360px;
+      background: rgba(115, 240, 255, 0.12);
+      bottom: -120px;
+      left: -80px;
+      border-radius: 50%;
+    }
 
-nav a{
-margin-left:20px;
-text-decoration:none;
-color:#cbd5f5;
-transition:0.3s;
-}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-nav a:hover{
-color:#38bdf8;
-}
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
 
-/* HERO */
+    .container {
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+    }
 
-.hero{
-text-align:center;
-padding:70px 20px;
-}
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(20px);
+      background: rgba(3, 10, 18, 0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
 
-.hero h1{
-font-size:40px;
-margin-bottom:15px;
-}
+    .topbar-inner {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
 
-.hero p{
-color:#94a3b8;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
 
-/* GRID */
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background:
+        linear-gradient(135deg, rgba(110, 168, 255, 0.22), rgba(115, 240, 255, 0.18)),
+        rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 18px 35px rgba(0,0,0,0.35);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-.container{
-max-width:1200px;
-margin:auto;
-padding:40px 20px;
-}
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(115, 240, 255, 0.24);
+    }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:25px;
-}
+    .brand-mark::after {
+      content: "AI";
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
 
-/* CARD */
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-.card{
-background:#020617;
-border-radius:15px;
-overflow:hidden;
-border:1px solid #1e293b;
-transition:0.3s;
-}
+    .brand-text strong {
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+    }
 
-.card:hover{
-transform:translateY(-5px);
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
-}
+    .brand-text span {
+      color: var(--muted);
+      font-size: 0.87rem;
+    }
 
-.card img{
-width:100%;
-height:320px;
-object-fit:cover;
-}
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
-.card-content{
-padding:20px;
-}
+    .nav a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      transition: 0.25s ease;
+    }
 
-.card-content h3{
-margin-bottom:10px;
-}
+    .nav a:hover,
+    .nav a.active {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
 
-.genre{
-font-size:13px;
-color:#38bdf8;
-margin-bottom:10px;
-}
+    .hero {
+      padding: 42px 0 26px;
+    }
 
-.desc{
-font-size:14px;
-color:#94a3b8;
-}
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: stretch;
+    }
 
-/* FOOTER */
+    .hero-card,
+    .glass-card {
+      background: linear-gradient(180deg, rgba(18, 31, 54, 0.85), rgba(9, 18, 32, 0.92));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
 
-footer{
-text-align:center;
-padding:30px;
-margin-top:40px;
-background:#020617;
-border-top:1px solid #1e293b;
-color:#64748b;
-}
+    .hero-card::before,
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(115,240,255,0.08), transparent 34%, transparent 70%, rgba(110,168,255,0.08));
+      pointer-events: none;
+    }
 
-</style>
+    .hero-content {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      min-height: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      width: fit-content;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--primary-2);
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 0 18px rgba(115, 240, 255, 0.6);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 4vw, 4.8rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      max-width: 12ch;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.04rem;
+      line-height: 1.8;
+      max-width: 64ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: #031120;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 18px 40px rgba(68, 180, 255, 0.3);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .metric {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .showcase-panel {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-height: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-label {
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .ai-core {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      min-height: 320px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .orb {
+      width: min(280px, 72vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.88), rgba(115,240,255,0.2) 18%, rgba(110,168,255,0.16) 38%, rgba(4,11,22,0.32) 68%, rgba(4,11,22,0.92));
+      position: relative;
+      box-shadow:
+        inset 0 0 44px rgba(255,255,255,0.08),
+        0 0 90px rgba(110,168,255,0.2),
+        0 0 130px rgba(115,240,255,0.14);
+      animation: floatOrb 6s ease-in-out infinite;
+    }
+
+    .orb::before,
+    .orb::after {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border-radius: inherit;
+      border: 1px solid rgba(115,240,255,0.16);
+      animation: pulseRing 4.4s linear infinite;
+    }
+
+    .orb::after {
+      inset: -34px;
+      animation-duration: 5.5s;
+      border-color: rgba(110,168,255,0.12);
+    }
+
+    .orb-core {
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,255,255,0.24);
+      animation: spin 20s linear infinite;
+    }
+
+    .orb-grid {
+      position: absolute;
+      inset: 28%;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(115,240,255,0.14), transparent 62%);
+      box-shadow: inset 0 0 30px rgba(255,255,255,0.08);
+    }
+
+    .orbit-chip {
+      position: absolute;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(7, 15, 28, 0.88);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 0.86rem;
+      white-space: nowrap;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+    }
+
+    .chip-1 { top: 14%; left: 8%; }
+    .chip-2 { top: 18%; right: 6%; }
+    .chip-3 { bottom: 24%; left: 4%; }
+    .chip-4 { bottom: 12%; right: 10%; }
+
+    .panel-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-box {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 1.08rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-box span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .section {
+      padding: 26px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.55rem, 2vw, 2.6rem);
+      letter-spacing: -0.04em;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 60ch;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(15, 27, 46, 0.84), rgba(7, 15, 27, 0.94));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 220px;
+    }
+
+    .feature-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 1.4rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.14rem;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      line-height: 1.75;
+      flex: 1;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .kpi-card {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-card strong {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 6px;
+      letter-spacing: -0.04em;
+    }
+
+    .kpi-card span {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .kpi-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .kpi-bar i {
+      display: block;
+      height: 100%;
+      width: var(--fill, 50%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+
+    .generator-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .generator-panel,
+    .preview-panel {
+      padding: 28px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(15, 27, 46, 0.86), rgba(7, 15, 27, 0.96));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 14px 15px;
+      outline: none;
+      transition: border-color 0.22s ease, transform 0.22s ease, background 0.22s ease;
+    }
+
+    .field textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(115,240,255,0.42);
+      background: rgba(255,255,255,0.055);
+      transform: translateY(-1px);
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      transition: 0.22s ease;
+    }
+
+    .pill.active {
+      background: linear-gradient(135deg, rgba(110,168,255,0.18), rgba(115,240,255,0.16));
+      color: var(--text);
+      border-color: rgba(115,240,255,0.22);
+      box-shadow: 0 12px 30px rgba(55, 155, 255, 0.14);
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--success);
+      font-size: 0.92rem;
+    }
+
+    .status-dot::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 18px currentColor;
+    }
+
+    .game-card {
+      border-radius: 28px;
+      background: linear-gradient(160deg, rgba(12, 22, 40, 0.98), rgba(6, 12, 24, 0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    .game-cover {
+      min-height: 220px;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(115,240,255,0.22), transparent 24%),
+        radial-gradient(circle at 80% 20%, rgba(110,168,255,0.2), transparent 24%),
+        linear-gradient(135deg, #13274a, #09111f 70%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-cover::before {
+      content: "";
+      position: absolute;
+      inset: auto -40px -60px auto;
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      background: rgba(115,240,255,0.11);
+      filter: blur(20px);
+    }
+
+    .game-badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .game-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.83rem;
+    }
+
+    .game-title {
+      font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+      letter-spacing: -0.05em;
+      margin-bottom: 10px;
+      max-width: 12ch;
+    }
+
+    .game-description {
+      color: #d4e2f8;
+      max-width: 50ch;
+      line-height: 1.8;
+    }
+
+    .game-body {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .spec {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .spec span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 8px;
+    }
+
+    .spec strong {
+      display: block;
+      font-size: 1.02rem;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .roadmap-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .roadmap-card h4 {
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .roadmap-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.94rem;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .pricing-card {
+      padding: 28px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(14, 26, 46, 0.88), rgba(6, 13, 24, 0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card.featured {
+      border-color: rgba(115,240,255,0.2);
+      transform: translateY(-6px);
+      box-shadow: 0 30px 80px rgba(43, 132, 255, 0.18);
+    }
+
+    .pricing-card.featured::before {
+      content: "Most Powerful";
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #031120;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+
+    .pricing-name {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pricing-name strong {
+      font-size: 1.15rem;
+    }
+
+    .pricing-name span {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .price {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+
+    .price small {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .pricing-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .pricing-list li {
+      display: flex;
+      gap: 10px;
+      align-items: start;
+      line-height: 1.6;
+    }
+
+    .pricing-list li::before {
+      content: "✓";
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .review-card {
+      padding: 24px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+    }
+
+    .review-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(110,168,255,0.3), rgba(115,240,255,0.22));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .review-card p {
+      color: var(--muted);
+      line-height: 1.85;
+    }
+
+    .cta {
+      padding: 34px;
+      border-radius: 34px;
+      background: linear-gradient(135deg, rgba(13, 31, 58, 0.96), rgba(7, 13, 25, 0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .cta h3 {
+      font-size: clamp(1.7rem, 2.5vw, 3rem);
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+    }
+
+    .cta p {
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 60ch;
+    }
+
+    .cta-card {
+      border-radius: 28px;
+      padding: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: grid;
+      gap: 14px;
+    }
+
+    .cta-list {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .cta-list div {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .footer {
+      padding: 26px 0 44px;
+    }
+
+    .footer-inner {
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-10px) scale(1.02); }
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.98); opacity: 0.5; }
+      50% { transform: scale(1.02); opacity: 0.9; }
+      100% { transform: scale(0.98); opacity: 0.5; }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1180px) {
+      .hero-grid,
+      .generator-grid,
+      .cta {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pricing-grid,
+      .review-grid,
+      .kpi-row,
+      .roadmap {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar-inner {
+        align-items: start;
+        padding: 14px 0;
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .hero-content,
+      .showcase-panel,
+      .generator-panel,
+      .preview-panel,
+      .pricing-card,
+      .review-card,
+      .cta {
+        padding: 22px;
+      }
+
+      .hero-metrics,
+      .feature-grid,
+      .pricing-grid,
+      .review-grid,
+      .kpi-row,
+      .roadmap,
+      .panel-stats,
+      .spec-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        max-width: 100%;
+      }
+
+      .game-title {
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#hero">
+        <div class="brand-mark"></div>
+        <div class="brand-text">
+          <strong>NeuroPlay Studio</strong>
+          <span>AI destekli profesyonel oyun konsept sitesi</span>
+        </div>
+      </a>
 
-<header>
-<div class="logo">AnimeHub</div>
+      <nav class="nav">
+        <a href="#features" class="active">Özellikler</a>
+        <a href="#insights">Analiz</a>
+        <a href="#generator">AI Oluşturucu</a>
+        <a href="#pricing">Paketler</a>
+        <a href="#reviews">Yorumlar</a>
+      </nav>
+    </div>
+  </header>
 
-<nav>
-<a href="#">Ana Sayfa</a>
-<a href="#">Popüler</a>
-<a href="#">Öneriler</a>
-<a href="#">Hakkında</a>
-</nav>
-</header>
+  <main>
+    <section class="hero" id="hero">
+      <div class="container hero-grid">
+        <article class="hero-card reveal show">
+          <div class="hero-content">
+            <div class="eyebrow">Future-ready game design interface</div>
+            <h1>Yapay zekâ ile seviye atlayan oyun fikirleri</h1>
+            <p>
+              Bu demo site; premium UI, modern UX, akıcı animasyonlar ve akıllı içerik üretimiyle
+              profesyonel bir oyun vitrini sunar. İçeride konsept üretici, performans kartları,
+              oyun paketleri, kullanıcı yorumları ve etkileyici bir AI gösterim alanı var.
+            </p>
 
-<section class="hero">
-<h1>En İyi Anime Önerileri</h1>
-<p>Yeni anime arıyorsan doğru yerdesin. En popüler ve kaliteli animeleri keşfet.</p>
-</section>
+            <div class="hero-actions">
+              <a href="#generator" class="btn btn-primary">AI ile oyun üret</a>
+              <a href="#pricing" class="btn btn-secondary">Paketleri incele</a>
+            </div>
 
-<div class="container">
+            <div class="hero-metrics">
+              <div class="metric">
+                <strong>128+</strong>
+                <span>Hazır oyun konsepti şablonu</span>
+              </div>
+              <div class="metric">
+                <strong>%94</strong>
+                <span>Kullanıcı etkileşim memnuniyeti</span>
+              </div>
+              <div class="metric">
+                <strong>24/7</strong>
+                <span>AI fikir motoru aktif</span>
+              </div>
+            </div>
+          </div>
+        </article>
 
-<div class="grid">
+        <aside class="glass-card reveal">
+          <div class="showcase-panel">
+            <span class="mini-label">Adaptive AI Core</span>
+            <div class="ai-core">
+              <div class="orb">
+                <div class="orb-core"></div>
+                <div class="orb-grid"></div>
+              </div>
+              <div class="orbit-chip chip-1">Quest Engine</div>
+              <div class="orbit-chip chip-2">Smart NPC</div>
+              <div class="orbit-chip chip-3">Level Logic</div>
+              <div class="orbit-chip chip-4">Story AI</div>
+            </div>
 
-<div class="card">
-<img src="https://i.imgur.com/9XnK9Kp.jpg">
-<div class="card-content">
-<h3>Attack on Titan</h3>
-<div class="genre">Aksiyon • Dram</div>
-<div class="desc">
-İnsanlık dev Titanlara karşı hayatta kalmaya çalışır. Karanlık ve epik bir hikaye.
-</div>
-</div>
-</div>
+            <div class="panel-stats">
+              <div class="stat-box">
+                <strong>Dinamik görev sistemi</strong>
+                <span>Oyuncu davranışına göre görev akışı yeniden şekillenir.</span>
+              </div>
+              <div class="stat-box">
+                <strong>Akıllı zorluk dengesi</strong>
+                <span>Başlangıçtan finale kadar tempo kontrollü ilerler.</span>
+              </div>
+              <div class="stat-box">
+                <strong>Canlı karar ağacı</strong>
+                <span>Hikâye seçimleri sonuçlara gerçek etki eder.</span>
+              </div>
+              <div class="stat-box">
+                <strong>Modern oyuncu arayüzü</strong>
+                <span>Temiz, rahat, mobil uyumlu ve profesyonel görünür.</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
 
-<div class="card">
-<img src="https://i.imgur.com/J5LVHEL.jpg">
-<div class="card-content">
-<h3>Jujutsu Kaisen</h3>
-<div class="genre">Aksiyon • Doğaüstü</div>
-<div class="desc">
-Lanete dönüşmüş ruhlara karşı savaşan büyücü öğrencilerin hikayesi.
-</div>
-</div>
-</div>
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="mini-label">Why this design works</span>
+            <h2>Premium UI + net UX + güçlü sunum</h2>
+          </div>
+          <p>
+            Kullanıcıyı yormayan hiyerarşi, yüksek kontrast, temiz kart sistemi,
+            mobil uyumlu bloklar ve net çağrı butonları sayesinde site profesyonel durur.
+          </p>
+        </div>
 
-<div class="card">
-<img src="https://i.imgur.com/8b0yG4P.jpg">
-<div class="card-content">
-<h3>Demon Slayer</h3>
-<div class="genre">Aksiyon • Fantastik</div>
-<div class="desc">
-Ailesi katledilen Tanjiro, kız kardeşini kurtarmak için iblis avcısı olur.
-</div>
-</div>
-</div>
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <div class="feature-icon">🎮</div>
+            <h3>Oyun odaklı vitrin</h3>
+            <p>Konsept oyunları sadece listelemek yerine güçlü sunum kartlarıyla öne çıkarır.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">🧠</div>
+            <h3>Yapay zekâ öneri sistemi</h3>
+            <p>Tür, ton, hedef kitle ve oynanış stiline göre otomatik oyun fikirleri üretir.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">⚡</div>
+            <h3>Hızlı kullanıcı akışı</h3>
+            <p>Karmaşa yok; kullanıcı önce etkilenir, sonra dener, sonra karar verir.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">📱</div>
+            <h3>Mobil uyumlu yapı</h3>
+            <p>Telefon, tablet ve bilgisayarda bozulmadan çalışan esnek grid sistemi kullanır.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-<div class="card">
-<img src="https://i.imgur.com/Nk0p1KT.jpg">
-<div class="card-content">
-<h3>Death Note</h3>
-<div class="genre">Psikolojik • Gizem</div>
-<div class="desc">
-Ölüm defteri bulan bir öğrencinin adalet anlayışı dünyayı değiştirir.
-</div>
-</div>
-</div>
+    <section class="section" id="insights">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="mini-label">Performance insights</span>
+            <h2>Site içi ürün algısını yükselten metrikler</h2>
+          </div>
+          <p>
+            Bu bölüm gerçek veri yerine demo odaklı premium KPI kartları gösterir.
+            Ama görünüm olarak tam bir startup landing page havası verir.
+          </p>
+        </div>
 
-<div class="card">
-<img src="https://i.imgur.com/5cX1kVQ.jpg">
-<div class="card-content">
-<h3>My Hero Academia</h3>
-<div class="genre">Aksiyon • Süper Güç</div>
-<div class="desc">
-Süper güçlerin normal olduğu dünyada kahraman olmak isteyen bir çocuk.
-</div>
-</div>
-</div>
+        <div class="kpi-row">
+          <div class="kpi-card reveal">
+            <strong>9.4/10</strong>
+            <span>Deneyim puanı</span>
+            <div class="kpi-bar"><i style="--fill:94%"></i></div>
+          </div>
+          <div class="kpi-card reveal">
+            <strong>%88</strong>
+            <span>Geri dönüş oranı</span>
+            <div class="kpi-bar"><i style="--fill:88%"></i></div>
+          </div>
+          <div class="kpi-card reveal">
+            <strong>41 sn</strong>
+            <span>Ortalama odak süresi</span>
+            <div class="kpi-bar"><i style="--fill:76%"></i></div>
+          </div>
+          <div class="kpi-card reveal">
+            <strong>%67</strong>
+            <span>Demo üretim tamamlama</span>
+            <div class="kpi-bar"><i style="--fill:67%"></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<div class="card">
-<img src="https://i.imgur.com/mhZ2Rql.jpg">
-<div class="card-content">
-<h3>One Punch Man</h3>
-<div class="genre">Komedi • Aksiyon</div>
-<div class="desc">
-Tek yumrukla herkesi yenebilen ama sıkılan bir kahramanın hikayesi.
-</div>
-</div>
-</div>
+    <section class="section" id="generator">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="mini-label">AI Game Builder</span>
+            <h2>Kendi oyun fikrini tek tıkla üret</h2>
+          </div>
+          <p>
+            Aşağıdaki alanları doldurunca sağ taraftaki oyun kartı anında değişir.
+            Böylece site sadece güzel görünmekle kalmaz, etkileşim de sağlar.
+          </p>
+        </div>
 
-</div>
-</div>
+        <div class="generator-grid">
+          <section class="generator-panel reveal">
+            <span class="mini-label">Input studio</span>
+            <div class="form-grid">
+              <div class="field">
+                <label for="gameName">Proje adı</label>
+                <input id="gameName" type="text" value="Neon Rift Protocol" />
+              </div>
 
-<footer>
-AnimeHub © 2026 | Anime öneri sitesi
-</footer>
+              <div class="field">
+                <label for="genre">Tür</label>
+                <select id="genre">
+                  <option selected>Aksiyon RPG</option>
+                  <option>Hayatta Kalma</option>
+                  <option>Platform Macera</option>
+                  <option>Strateji</option>
+                  <option>Korku</option>
+                </select>
+              </div>
 
+              <div class="field">
+                <label for="platform">Platform</label>
+                <select id="platform">
+                  <option>PC + Konsol</option>
+                  <option selected>Mobil + PC</option>
+                  <option>Sadece Mobil</option>
+                  <option>Web Tabanlı</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="style">Görsel stil</label>
+                <select id="style">
+                  <option>Cyber Neon</option>
+                  <option selected>Sinematik Sci-Fi</option>
+                  <option>Low Poly Modern</option>
+                  <option>Dark Fantasy</option>
+                  <option>Cartoon Enerjik</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Ton</label>
+                <div class="toggle-group" id="toneGroup">
+                  <button class="pill active" type="button" data-tone="epik">Epik</button>
+                  <button class="pill" type="button" data-tone="karanlık">Karanlık</button>
+                  <button class="pill" type="button" data-tone="hızlı">Hızlı</button>
+                  <button class="pill" type="button" data-tone="rekabetçi">Rekabetçi</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="description">Ana fikir</label>
+                <textarea id="description">Parçalanmış bir gelecekte, oyuncu yapay zekâ ile birleşmiş özel bir savaşçıyı kontrol eder. Her bölümde şehir katmanları, boss karşılaşmaları ve seçimlere göre değişen görevler vardır.</textarea>
+              </div>
+
+              <button class="btn btn-primary" id="generateBtn" type="button">AI konsepti yenile</button>
+            </div>
+          </section>
+
+          <section class="preview-panel reveal">
+            <div class="preview-head">
+              <div>
+                <span class="mini-label">Live preview</span>
+                <h3 style="margin-top:8px; font-size:1.35rem;">Anlık oyun konsepti</h3>
+              </div>
+              <div class="status-dot">Canlı render</div>
+            </div>
+
+            <article class="game-card" id="gamePreview">
+              <div class="game-cover">
+                <div class="game-badge-row">
+                  <span class="game-badge" id="badgeGenre">Aksiyon RPG</span>
+                  <span class="game-badge" id="badgePlatform">Mobil + PC</span>
+                  <span class="game-badge" id="badgeStyle">Sinematik Sci-Fi</span>
+                </div>
+                <h3 class="game-title" id="previewTitle">Neon Rift Protocol</h3>
+                <p class="game-description" id="previewDescription">
+                  Parçalanmış bir gelecekte, oyuncu yapay zekâ ile birleşmiş özel bir savaşçıyı kontrol eder.
+                  Her bölümde şehir katmanları, boss karşılaşmaları ve seçimlere göre değişen görevler vardır.
+                </p>
+              </div>
+
+              <div class="game-body">
+                <div class="spec-grid">
+                  <div class="spec">
+                    <span>Ton</span>
+                    <strong id="previewTone">Epik</strong>
+                  </div>
+                  <div class="spec">
+                    <span>Hedef deneyim</span>
+                    <strong id="previewExperience">Yüksek tempolu ilerleyiş</strong>
+                  </div>
+                  <div class="spec">
+                    <span>Öne çıkan sistem</span>
+                    <strong id="previewSystem">Uyarlanabilir boss döngüsü</strong>
+                  </div>
+                  <div class="spec">
+                    <span>Monetizasyon</span>
+                    <strong id="previewMonetization">Premium + kozmetik içerik</strong>
+                  </div>
+                </div>
+
+                <div class="roadmap">
+                  <div class="roadmap-card">
+                    <h4>Act I</h4>
+                    <p id="roadmapOne">Oyuncu çekirdek şehre giriş yapar ve ilk yapay zekâ bağlantısını açar.</p>
+                  </div>
+                  <div class="roadmap-card">
+                    <h4>Act II</h4>
+                    <p id="roadmapTwo">Rakip fraksiyonlar açılır, görev sistemi karar odaklı hâle gelir.</p>
+                  </div>
+                  <div class="roadmap-card">
+                    <h4>Act III</h4>
+                    <p id="roadmapThree">Final savaşında şehir ağı ve AI çekirdeği kaderini belirler.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="mini-label">Packages</span>
+            <h2>Profesyonel sunum için 3 seviye paket</h2>
+          </div>
+          <p>
+            Gerçek satış sistemi değil; profesyonel durması için tasarlanmış demo paket yapısı.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="pricing-card reveal">
+            <div class="pricing-name">
+              <strong>Starter Vision</strong>
+              <span>Küçük ekipler ve hızlı konsept denemeleri için ideal.</span>
+            </div>
+            <div class="price">₺0 <small>/ demo</small></div>
+            <ul class="pricing-list">
+              <li>Hazır vitrin tasarımı</li>
+              <li>Temel AI oyun kartı üretimi</li>
+              <li>Mobil uyumlu arayüz</li>
+              <li>Tek sayfa sunum</li>
+            </ul>
+            <button class="btn btn-secondary" type="button">Başla</button>
+          </article>
+
+          <article class="pricing-card featured reveal">
+            <div class="pricing-name">
+              <strong>Studio Prime</strong>
+              <span>En iyi denge: premium görünüm, güçlü deneyim, daha fazla etkileşim.</span>
+            </div>
+            <div class="price">₺999 <small>/ proje</small></div>
+            <ul class="pricing-list">
+              <li>Gelişmiş konsept üretimi</li>
+              <li>Canlı önizleme kartları</li>
+              <li>Daha güçlü CTA yapısı</li>
+              <li>Özel renk ve marka uyumu</li>
+            </ul>
+            <button class="btn btn-primary" type="button">En iyi seçenek</button>
+          </article>
+
+          <article class="pricing-card reveal">
+            <div class="pricing-name">
+              <strong>Legend Tier</strong>
+              <span>Gösterişli sunumlar ve yatırımcı etkisi için üst seviye görünüm.</span>
+            </div>
+            <div class="price">₺2499 <small>/ proje</small></div>
+            <ul class="pricing-list">
+              <li>Özel animasyon katmanı</li>
+              <li>Kurumsal sunum düzeni</li>
+              <li>İleri düzey içerik blokları</li>
+              <li>Premium landing page akışı</li>
+            </ul>
+            <button class="btn btn-secondary" type="button">Detay gör</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="reviews">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="mini-label">Community feedback</span>
+            <h2>Vitrini güçlü gösteren örnek yorum kartları</h2>
+          </div>
+          <p>
+            Gerçek kullanıcı verisi yerine profesyonel arayüz demosu için hazırlanmış yorum alanı.
+          </p>
+        </div>
+
+        <div class="review-grid">
+          <article class="review-card reveal">
+            <div class="review-top">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar">AY</div>
+                <div>
+                  <strong>Atlas Yazılım</strong>
+                  <div style="color:var(--muted); font-size:0.92rem;">Game UI Team</div>
+                </div>
+              </div>
+              <div style="color:var(--warning);">★★★★★</div>
+            </div>
+            <p>Bu tasarım direkt profesyonel gözüküyor. Kart yapısı, boşluk kullanımı ve etkileşim akışı baya temiz.</p>
+          </article>
+
+          <article class="review-card reveal">
+            <div class="review-top">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar">NR</div>
+                <div>
+                  <strong>Nova Realm</strong>
+                  <div style="color:var(--muted); font-size:0.92rem;">Indie Studio</div>
+                </div>
+              </div>
+              <div style="color:var(--warning);">★★★★★</div>
+            </div>
+            <p>AI konsept alanı sayfayı sıradan bir site olmaktan çıkarıyor. Ürün hissi veriyor, bu önemli.</p>
+          </article>
+
+          <article class="review-card reveal">
+            <div class="review-top">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar">SK</div>
+                <div>
+                  <strong>Sky Core</strong>
+                  <div style="color:var(--muted); font-size:0.92rem;">Creative Lead</div>
+                </div>
+              </div>
+              <div style="color:var(--warning);">★★★★★</div>
+            </div>
+            <p>Mobil kırılımlar düzgün, başlık hiyerarşisi temiz, buton alanları net. UX tarafı da oturmuş.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta reveal">
+          <div>
+            <span class="mini-label">Launch your concept</span>
+            <h3>Bu siteyi oyununa, uygulamana ya da okul projesine göre özelleştirebilirsin</h3>
+            <p>
+              İstersen bunu bir sonraki adımda gerçek bir oyun sitene çevirebiliriz:
+              karakter bölümü, ekran görüntüsü alanı, roadmap, indir butonu, ekip sayfası,
+              hatta dark-light mode bile eklenir.
+            </p>
+          </div>
+
+          <div class="cta-card">
+            <div class="cta-list">
+              <div>✅ Tek dosyada çalışır</div>
+              <div>✅ HTML + CSS + JS içerir</div>
+              <div>✅ Premium görünür</div>
+              <div>✅ Mobil uyumludur</div>
+            </div>
+            <a href="#generator" class="btn btn-primary">Konsepti düzenle</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>© 2026 NeuroPlay Studio — Advanced game concept showcase</div>
+      <div>Designed for strong first impression, clean interaction and premium product feel.</div>
+    </div>
+  </footer>
+
+  <script>
+    const pills = document.querySelectorAll('.pill');
+    const generateBtn = document.getElementById('generateBtn');
+    const gameNameInput = document.getElementById('gameName');
+    const genreInput = document.getElementById('genre');
+    const platformInput = document.getElementById('platform');
+    const styleInput = document.getElementById('style');
+    const descriptionInput = document.getElementById('description');
+
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDescription = document.getElementById('previewDescription');
+    const badgeGenre = document.getElementById('badgeGenre');
+    const badgePlatform = document.getElementById('badgePlatform');
+    const badgeStyle = document.getElementById('badgeStyle');
+    const previewTone = document.getElementById('previewTone');
+    const previewExperience = document.getElementById('previewExperience');
+    const previewSystem = document.getElementById('previewSystem');
+    const previewMonetization = document.getElementById('previewMonetization');
+    const roadmapOne = document.getElementById('roadmapOne');
+    const roadmapTwo = document.getElementById('roadmapTwo');
+    const roadmapThree = document.getElementById('roadmapThree');
+
+    const experienceMap = {
+      epik: 'Sinematik yükseliş ve güçlü ilerleyiş',
+      karanlık: 'Gerilim dolu keşif ve baskı hissi',
+      hızlı: 'Akıcı savaş ve seri bölüm ritmi',
+      rekabetçi: 'Skor, liderlik ve mastery hissi'
+    };
+
+    const systemMap = {
+      'Aksiyon RPG': 'Uyarlanabilir boss döngüsü',
+      'Hayatta Kalma': 'Kaynak baskısı ve akıllı tehdit sistemi',
+      'Platform Macera': 'Katmanlı parkur ve çevresel bulmaca akışı',
+      'Strateji': 'Dinamik birim sinerjisi ve karar motoru',
+      'Korku': 'Tahmin edilemeyen takip ve ses yönlendirme sistemi'
+    };
+
+    const monetizationMap = {
+      'PC + Konsol': 'Premium sürüm + genişleme paketi',
+      'Mobil + PC': 'Premium + kozmetik içerik',
+      'Sadece Mobil': 'Ücretsiz giriş + sezon içerikleri',
+      'Web Tabanlı': 'Abonelik + özel bölüm erişimi'
+    };
+
+    function getActiveTone() {
+      return document.querySelector('.pill.active')?.dataset.tone || 'epik';
+    }
+
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        pills.forEach((item) => item.classList.remove('active'));
+        pill.classList.add('active');
+        updatePreview(false);
+      });
+    });
+
+    function createRoadmapText(name, genre, tone) {
+      const baseName = name || 'Yeni Proje';
+
+      if (genre === 'Korku') {
+        return [
+          `${baseName} açılışında oyuncu güvenli sandığı bölgede ilk anomaliyle yüzleşir.`,
+          `Orta bölümde karanlık veri odaları açılır ve ${tone} atmosfer yoğunlaşır.`,
+          `Finalde oyuncu tehdidin gerçek kaynağını bulur ve çıkış sistemi çöker.`
+        ];
+      }
+
+      if (genre === 'Strateji') {
+        return [
+          `${baseName} başlangıcında üs kurulur ve ilk savunma katmanı aktive edilir.`,
+          `Orta aşamada fraksiyon çatışmaları açılır, seçimler ekonomi dengesini etkiler.`,
+          `Finalde tüm savaş ağları birleşir ve büyük komuta çatışması başlar.`
+        ];
+      }
+
+      if (genre === 'Platform Macera') {
+        return [
+          `${baseName} açılışında oyuncu hareket setini öğrenir ve ilk parkur kapısını aşar.`,
+          `İkinci perdede yeni hareket yetenekleri ve gizli rotalar oyuna katılır.`,
+          `Final bölümünde hız, zamanlama ve büyük kaçış sekansı birleşir.`
+        ];
+      }
+
+      if (genre === 'Hayatta Kalma') {
+        return [
+          `${baseName} başlangıcında oyuncu temel sığınak ve kaynak döngüsünü kurar.`,
+          `İkinci aşamada ortam tehditleri artar ve ${tone} baskı daha belirgin olur.`,
+          `Finalde büyük dalga saldırısı gelir ve tüm hazırlıklar test edilir.`
+        ];
+      }
+
+      return [
+        `${baseName} açılışında oyuncu çekirdek şehre giriş yapar ve ilk yükseltmeyi açar.`,
+        `İkinci perdede rakip güçler açılır, ${tone} ton daha baskın hissedilir.`,
+        `Final safhasında ana çekirdek, boss döngüsü ve büyük karar anı birleşir.`
+      ];
+    }
+
+    function updatePreview(withPulse = true) {
+      const title = gameNameInput.value.trim() || 'İsimsiz Oyun';
+      const genre = genreInput.value;
+      const platform = platformInput.value;
+      const style = styleInput.value;
+      const tone = getActiveTone();
+      const description = descriptionInput.value.trim() || 'Bu oyun için açıklama eklenmedi.';
+
+      previewTitle.textContent = title;
+      previewDescription.textContent = description;
+      badgeGenre.textContent = genre;
+      badgePlatform.textContent = platform;
+      badgeStyle.textContent = style;
+      previewTone.textContent = tone.charAt(0).toUpperCase() + tone.slice(1);
+      previewExperience.textContent = experienceMap[tone] || 'Dengeli oyun akışı';
+      previewSystem.textContent = systemMap[genre] || 'Modüler oynanış sistemi';
+      previewMonetization.textContent = monetizationMap[platform] || 'Premium model';
+
+      const roadmap = createRoadmapText(title, genre, tone);
+      roadmapOne.textContent = roadmap[0];
+      roadmapTwo.textContent = roadmap[1];
+      roadmapThree.textContent = roadmap[2];
+
+      if (withPulse) {
+        const preview = document.getElementById('gamePreview');
+        preview.animate(
+          [
+            { transform: 'scale(1)', opacity: 0.86 },
+            { transform: 'scale(1.015)', opacity: 1 },
+            { transform: 'scale(1)', opacity: 1 }
+          ],
+          {
+            duration: 520,
+            easing: 'ease'
+          }
+        );
+      }
+    }
+
+    generateBtn.addEventListener('click', updatePreview);
+    gameNameInput.addEventListener('input', () => updatePreview(false));
+    genreInput.addEventListener('change', () => updatePreview(false));
+    platformInput.addEventListener('change', () => updatePreview(false));
+    styleInput.addEventListener('change', () => updatePreview(false));
+    descriptionInput.addEventListener('input', () => updatePreview(false));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach((item) => observer.observe(item));
+
+    document.querySelectorAll('.nav a').forEach((link) => {
+      link.addEventListener('click', () => {
+        document.querySelectorAll('.nav a').forEach((a) => a.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    updatePreview(false);
+  </script>
 </body>
 </html>
