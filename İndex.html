@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnimeHub | Anime Önerileri</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Arial;
+}
+
+body{
+background:#0f172a;
+color:white;
+}
+
+/* HEADER */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 40px;
+background:#020617;
+border-bottom:1px solid #1e293b;
+}
+
+.logo{
+font-size:26px;
+font-weight:bold;
+color:#38bdf8;
+}
+
+nav a{
+margin-left:20px;
+text-decoration:none;
+color:#cbd5f5;
+transition:0.3s;
+}
+
+nav a:hover{
+color:#38bdf8;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:70px 20px;
+}
+
+.hero h1{
+font-size:40px;
+margin-bottom:15px;
+}
+
+.hero p{
+color:#94a3b8;
+}
+
+/* GRID */
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px 20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+/* CARD */
+
+.card{
+background:#020617;
+border-radius:15px;
+overflow:hidden;
+border:1px solid #1e293b;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.card img{
+width:100%;
+height:320px;
+object-fit:cover;
+}
+
+.card-content{
+padding:20px;
+}
+
+.card-content h3{
+margin-bottom:10px;
+}
+
+.genre{
+font-size:13px;
+color:#38bdf8;
+margin-bottom:10px;
+}
+
+.desc{
+font-size:14px;
+color:#94a3b8;
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:30px;
+margin-top:40px;
+background:#020617;
+border-top:1px solid #1e293b;
+color:#64748b;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">AnimeHub</div>
+
+<nav>
+<a href="#">Ana Sayfa</a>
+<a href="#">Popüler</a>
+<a href="#">Öneriler</a>
+<a href="#">Hakkında</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>En İyi Anime Önerileri</h1>
+<p>Yeni anime arıyorsan doğru yerdesin. En popüler ve kaliteli animeleri keşfet.</p>
+</section>
+
+<div class="container">
+
+<div class="grid">
+
+<div class="card">
+<img src="https://i.imgur.com/9XnK9Kp.jpg">
+<div class="card-content">
+<h3>Attack on Titan</h3>
+<div class="genre">Aksiyon • Dram</div>
+<div class="desc">
+İnsanlık dev Titanlara karşı hayatta kalmaya çalışır. Karanlık ve epik bir hikaye.
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://i.imgur.com/J5LVHEL.jpg">
+<div class="card-content">
+<h3>Jujutsu Kaisen</h3>
+<div class="genre">Aksiyon • Doğaüstü</div>
+<div class="desc">
+Lanete dönüşmüş ruhlara karşı savaşan büyücü öğrencilerin hikayesi.
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://i.imgur.com/8b0yG4P.jpg">
+<div class="card-content">
+<h3>Demon Slayer</h3>
+<div class="genre">Aksiyon • Fantastik</div>
+<div class="desc">
+Ailesi katledilen Tanjiro, kız kardeşini kurtarmak için iblis avcısı olur.
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://i.imgur.com/Nk0p1KT.jpg">
+<div class="card-content">
+<h3>Death Note</h3>
+<div class="genre">Psikolojik • Gizem</div>
+<div class="desc">
+Ölüm defteri bulan bir öğrencinin adalet anlayışı dünyayı değiştirir.
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://i.imgur.com/5cX1kVQ.jpg">
+<div class="card-content">
+<h3>My Hero Academia</h3>
+<div class="genre">Aksiyon • Süper Güç</div>
+<div class="desc">
+Süper güçlerin normal olduğu dünyada kahraman olmak isteyen bir çocuk.
+</div>
+</div>
+</div>
+
+<div class="card">
+<img src="https://i.imgur.com/mhZ2Rql.jpg">
+<div class="card-content">
+<h3>One Punch Man</h3>
+<div class="genre">Komedi • Aksiyon</div>
+<div class="desc">
+Tek yumrukla herkesi yenebilen ama sıkılan bir kahramanın hikayesi.
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<footer>
+AnimeHub © 2026 | Anime öneri sitesi
+</footer>
+
+</body>
+</html>
