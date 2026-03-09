@@ -1,361 +1,555 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Battle Arena</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", sans-serif;
-    }
+import React, { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Search,
+  Phone,
+  Video,
+  MoreVertical,
+  Send,
+  Smile,
+  Paperclip,
+  Mic,
+  ShieldCheck,
+  Check,
+  CheckCheck,
+  Lock,
+  Mail,
+  User,
+  Eye,
+  EyeOff,
+  MessageSquare,
+  Moon,
+  Sun,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-    body {
-      min-height: 100vh;
-      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
+const seedChats = [
+  {
+    id: 1,
+    name: "Atlas Studio",
+    role: "Product Team",
+    color: "from-emerald-500 to-teal-500",
+    online: true,
+    unread: 2,
+    lastSeen: "şimdi aktif",
+    messages: [
+      {
+        id: 1,
+        from: "them",
+        text: "Selam, yeni arayüz prototipini inceledik. Görsel dil çok temiz duruyor.",
+        time: "09:12",
+        status: "read",
+      },
+      {
+        id: 2,
+        from: "me",
+        text: "Süper. İsterseniz akşamüstü mesaj akışını ve giriş ekranını da premium seviyeye çekebilirim.",
+        time: "09:14",
+        status: "read",
+      },
+      {
+        id: 3,
+        from: "them",
+        text: "Tam olarak onu istiyoruz. WhatsApp hissi olsun ama daha modern ve daha gösterişli dursun.",
+        time: "09:16",
+        status: "read",
+      },
+      {
+        id: 4,
+        from: "them",
+        text: "Bir de oturum açma ekranı güven verir gibi görünmeli.",
+        time: "09:18",
+        status: "delivered",
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Nova Core",
+    role: "Design Lead",
+    color: "from-sky-500 to-blue-600",
+    online: false,
+    unread: 0,
+    lastSeen: "bugün 10:41",
+    messages: [
+      {
+        id: 1,
+        from: "them",
+        text: "Mesaj balonlarında yumuşak gölge kullanımı baya iyi durmuş.",
+        time: "08:50",
+        status: "read",
+      },
+      {
+        id: 2,
+        from: "me",
+        text: "Liste tarafına arama, rozet ve okunmamış sayaç ekledim.",
+        time: "08:54",
+        status: "read",
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Pixel Forge",
+    role: "Frontend",
+    color: "from-fuchsia-500 to-pink-600",
+    online: true,
+    unread: 4,
+    lastSeen: "şimdi aktif",
+    messages: [
+      {
+        id: 1,
+        from: "them",
+        text: "Giriş ekranında doğrulama alanları çok basit kalmasın, biraz premium copy yazalım.",
+        time: "07:40",
+        status: "read",
+      },
+      {
+        id: 2,
+        from: "me",
+        text: "Tamamdır. Güven, hız ve modern iletişim hissini öne çıkaran metinler kullanırım.",
+        time: "07:42",
+        status: "read",
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: "Mira",
+    role: "Community",
+    color: "from-violet-500 to-indigo-600",
+    online: false,
+    unread: 1,
+    lastSeen: "dün 22:19",
+    messages: [
+      {
+        id: 1,
+        from: "them",
+        text: "Bu tasarım telefonda da iyi görünürse baya güçlü olur.",
+        time: "Dün",
+        status: "read",
+      },
+    ],
+  },
+];
 
-    .bg {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle, #1f1f1f, #000);
-      z-index: -1;
-      opacity: 0.7;
-    }
+function StatusIcon({ status }: { status: string }) {
+  if (status === "sent") return <Check className="h-3.5 w-3.5" />;
+  if (status === "delivered") return <CheckCheck className="h-3.5 w-3.5 opacity-80" />;
+  return <CheckCheck className="h-3.5 w-3.5 text-sky-500" />;
+}
 
-    .topbar {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
+export default function WhatsAppStyleChatApp() {
+  const [isDark, setIsDark] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [search, setSearch] = useState("");
+  const [email, setEmail] = useState("barbaros@example.com");
+  const [password, setPassword] = useState("12345678");
+  const [name, setName] = useState("Barbaros");
+  const [messageText, setMessageText] = useState("");
+  const [error, setError] = useState("");
+  const [chats, setChats] = useState(seedChats);
+  const [activeChatId, setActiveChatId] = useState(1);
 
-    h1 {
-      font-size: 28px;
-      letter-spacing: 1px;
-    }
+  const activeChat = chats.find((chat) => chat.id === activeChatId) || chats[0];
 
-    .scoreboard {
-      display: flex;
-      gap: 20px;
-      font-size: 18px;
-      font-weight: 600;
-    }
+  const filteredChats = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return chats;
+    return chats.filter(
+      (chat) =>
+        chat.name.toLowerCase().includes(q) ||
+        chat.role.toLowerCase().includes(q) ||
+        chat.messages.some((msg) => msg.text.toLowerCase().includes(q))
+    );
+  }, [search, chats]);
 
-    .game-container {
-      margin-top: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      padding: 0 16px;
-    }
-
-    canvas {
-      border-radius: 12px;
-      background: #111;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255,255,255,0.08);
-      max-width: 100%;
-      height: auto;
-    }
-
-    .controls {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    button {
-      padding: 12px 30px;
-      border: none;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
-      color: white;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 10px 24px rgba(255, 75, 43, 0.25);
-    }
-
-    button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 16px 30px rgba(255, 75, 43, 0.35);
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .info {
-      color: rgba(255,255,255,0.8);
-      font-size: 15px;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    footer {
-      margin-top: auto;
-      padding: 20px;
-      opacity: 0.7;
-      text-align: center;
-    }
-
-    @media (max-width: 700px) {
-      .topbar {
-        flex-direction: column;
-        gap: 12px;
-        padding: 18px 20px;
-        text-align: center;
+  const theme = isDark
+    ? {
+        page: "bg-zinc-950 text-zinc-100",
+        shell: "bg-zinc-950",
+        panel: "bg-zinc-900/90 border-zinc-800",
+        panelSoft: "bg-zinc-900/70 border-zinc-800",
+        input: "bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-500",
+        muted: "text-zinc-400",
+        bubbleThem: "bg-zinc-800 text-zinc-100 border-zinc-700",
+        bubbleMe: "bg-emerald-500 text-emerald-950 border-emerald-400/40",
+        hero: "from-emerald-500/20 via-teal-500/10 to-cyan-500/20",
       }
+    : {
+        page: "bg-zinc-100 text-zinc-900",
+        shell: "bg-zinc-100",
+        panel: "bg-white/90 border-zinc-200",
+        panelSoft: "bg-white/80 border-zinc-200",
+        input: "bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400",
+        muted: "text-zinc-500",
+        bubbleThem: "bg-white text-zinc-900 border-zinc-200",
+        bubbleMe: "bg-emerald-500 text-white border-emerald-500",
+        hero: "from-emerald-200 via-teal-100 to-cyan-200",
+      };
 
-      h1 {
-        font-size: 24px;
-      }
-
-      .scoreboard {
-        font-size: 16px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+  const handleLogin = () => {
+    if (!name.trim()) {
+      setError("İsim alanı boş kalamaz.");
+      return;
     }
-  </style>
-</head>
-<body>
-  <div class="bg"></div>
+    if (!email.includes("@") || email.length < 6) {
+      setError("Geçerli bir e-posta gir.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Şifre en az 8 karakter olmalı.");
+      return;
+    }
+    setError("");
+    setLoggedIn(true);
+  };
 
-  <header class="topbar">
-    <h1>🤖 AI Battle Arena</h1>
+  const handleSend = () => {
+    if (!messageText.trim()) return;
+    const updated = chats.map((chat) => {
+      if (chat.id !== activeChatId) return chat;
+      return {
+        ...chat,
+        messages: [
+          ...chat.messages,
+          {
+            id: Date.now(),
+            from: "me",
+            text: messageText.trim(),
+            time: new Date().toLocaleTimeString("tr-TR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            status: "sent",
+          },
+        ],
+      };
+    });
+    setChats(updated);
+    setMessageText("");
+  };
 
-    <div class="scoreboard">
-      <div>Score: <span id="score">0</span></div>
-      <div>Level: <span id="level">1</span></div>
+  if (!loggedIn) {
+    return (
+      <div className={`min-h-screen ${theme.page} transition-colors duration-300`}>
+        <div className="relative overflow-hidden">
+          <div className={`absolute inset-0 bg-gradient-to-br ${theme.hero}`} />
+          <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
+          <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
+
+          <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-4 py-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
+              className="space-y-6"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400">
+                <ShieldCheck className="h-4 w-4" />
+                Güvenli oturum ve modern mesaj deneyimi
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="max-w-xl text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+                  WhatsApp tarzı,
+                  <span className="block text-emerald-400">premium mesajlaşma arayüzü</span>
+                </h1>
+                <p className={`max-w-2xl text-base leading-7 sm:text-lg ${theme.muted}`}>
+                  Bu demo; profesyonel görünümlü oturum açma ekranı, sohbet listesi,
+                  aktif konuşma alanı, okunma durumları ve modern mobil uygulama hissi veren
+                  düzeni tek sayfada sunar. Dili biraz daha kurumsal, görünüşü ise baya güçlü tutuldu.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Card className={`rounded-3xl border ${theme.panelSoft} shadow-2xl`}>
+                  <CardContent className="p-5">
+                    <div className="mb-2 text-2xl font-black">256-bit</div>
+                    <div className={`text-sm ${theme.muted}`}>Güven veren oturum algısı</div>
+                  </CardContent>
+                </Card>
+                <Card className={`rounded-3xl border ${theme.panelSoft} shadow-2xl`}>
+                  <CardContent className="p-5">
+                    <div className="mb-2 text-2xl font-black">Realtime</div>
+                    <div className={`text-sm ${theme.muted}`}>Canlı sohbet hissi veren akış</div>
+                  </CardContent>
+                </Card>
+                <Card className={`rounded-3xl border ${theme.panelSoft} shadow-2xl`}>
+                  <CardContent className="p-5">
+                    <div className="mb-2 text-2xl font-black">Modern UX</div>
+                    <div className={`text-sm ${theme.muted}`}>Temiz, net ve mobil uyumlu</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.45, delay: 0.05 }}
+            >
+              <Card className={`rounded-[2rem] border ${theme.panel} shadow-2xl backdrop-blur-xl`}>
+                <CardContent className="p-6 sm:p-8">
+                  <div className="mb-6 flex items-center justify-between">
+                    <div>
+                      <div className="text-2xl font-black tracking-tight">Hoş geldin</div>
+                      <div className={`mt-1 text-sm ${theme.muted}`}>
+                        Hesabına giriş yap ve konuşmalarına kaldığın yerden devam et.
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="rounded-2xl"
+                      onClick={() => setIsDark((v) => !v)}
+                    >
+                      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className={`text-sm font-medium ${theme.muted}`}>Görünen ad</label>
+                      <div className="relative">
+                        <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                        <Input
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className={`h-12 rounded-2xl pl-11 ${theme.input}`}
+                          placeholder="Adını yaz"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className={`text-sm font-medium ${theme.muted}`}>E-posta</label>
+                      <div className="relative">
+                        <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                        <Input
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className={`h-12 rounded-2xl pl-11 ${theme.input}`}
+                          placeholder="ornek@mail.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className={`text-sm font-medium ${theme.muted}`}>Şifre</label>
+                      <div className="relative">
+                        <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className={`h-12 rounded-2xl pl-11 pr-12 ${theme.input}`}
+                          placeholder="En az 8 karakter"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 transition hover:text-zinc-200"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {error ? (
+                      <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                        {error}
+                      </div>
+                    ) : (
+                      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+                        Giriş tasarımı örnek amaçlıdır; bilgiler yerelde doğrulanır.
+                      </div>
+                    )}
+
+                    <Button
+                      onClick={handleLogin}
+                      className="h-12 w-full rounded-2xl bg-emerald-500 text-base font-bold text-emerald-950 hover:bg-emerald-400"
+                    >
+                      Oturum aç
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`min-h-screen ${theme.page} ${theme.shell} transition-colors duration-300`}>
+      <div className="mx-auto max-w-7xl p-3 sm:p-5 lg:p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className={`grid min-h-[88vh] overflow-hidden rounded-[2rem] border ${theme.panel} shadow-2xl lg:grid-cols-[360px_1fr]`}
+        >
+          <aside className={`border-r ${theme.panelSoft} flex flex-col`}>
+            <div className="flex items-center justify-between border-b border-inherit p-4 sm:p-5">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-11 w-11 rounded-2xl">
+                  <AvatarFallback className="rounded-2xl bg-emerald-500 font-bold text-emerald-950">
+                    {name.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="font-bold">{name}</div>
+                  <div className={`text-xs ${theme.muted}`}>Mesaj merkezine bağlı</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" className="rounded-2xl" onClick={() => setIsDark((v) => !v)}>
+                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
+                <Button variant="outline" size="icon" className="rounded-2xl" onClick={() => setLoggedIn(false)}>
+                  <Lock className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-4">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Sohbet ara"
+                  className={`h-12 rounded-2xl pl-11 ${theme.input}`}
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 space-y-2 overflow-y-auto px-3 pb-3">
+              {filteredChats.map((chat) => {
+                const lastMessage = chat.messages[chat.messages.length - 1];
+                return (
+                  <button
+                    key={chat.id}
+                    onClick={() => setActiveChatId(chat.id)}
+                    className={`w-full rounded-3xl border p-3 text-left transition hover:scale-[0.99] ${
+                      activeChatId === chat.id
+                        ? "border-emerald-500/40 bg-emerald-500/10"
+                        : `${theme.panelSoft}`
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${chat.color} font-black text-white shadow-lg`}>
+                        {chat.name.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="truncate font-bold">{chat.name}</div>
+                          <div className={`text-xs ${theme.muted}`}>{lastMessage?.time}</div>
+                        </div>
+                        <div className={`mt-1 text-xs ${theme.muted}`}>{chat.role}</div>
+                        <div className={`mt-2 truncate text-sm ${theme.muted}`}>{lastMessage?.text}</div>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        {chat.online && <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />}
+                        {chat.unread > 0 && (
+                          <div className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs font-bold text-emerald-950">
+                            {chat.unread}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          <section className="flex min-h-[70vh] flex-col">
+            <div className={`flex items-center justify-between border-b ${theme.panelSoft} px-4 py-4 sm:px-6`}>
+              <div className="flex items-center gap-3">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${activeChat.color} font-black text-white shadow-lg`}>
+                  {activeChat.name.slice(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <div className="font-bold">{activeChat.name}</div>
+                  <div className={`text-sm ${theme.muted}`}>
+                    {activeChat.online ? "şimdi aktif" : activeChat.lastSeen}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" className="rounded-2xl"><Phone className="h-4 w-4" /></Button>
+                <Button variant="outline" size="icon" className="rounded-2xl"><Video className="h-4 w-4" /></Button>
+                <Button variant="outline" size="icon" className="rounded-2xl"><MoreVertical className="h-4 w-4" /></Button>
+              </div>
+            </div>
+
+            <div className="relative flex-1 overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.08),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(6,182,212,0.08),transparent_28%)]" />
+              <div className="relative flex h-full flex-col gap-3 overflow-y-auto p-4 sm:p-6">
+                {activeChat.messages.map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`max-w-[82%] rounded-3xl border px-4 py-3 shadow-lg sm:max-w-[70%] ${
+                      msg.from === "me"
+                        ? `${theme.bubbleMe} ml-auto`
+                        : `${theme.bubbleThem}`
+                    }`}
+                  >
+                    <div className="text-sm leading-7">{msg.text}</div>
+                    <div className={`mt-2 flex items-center justify-end gap-1 text-[11px] ${msg.from === "me" ? "text-white/80" : theme.muted}`}>
+                      <span>{msg.time}</span>
+                      {msg.from === "me" && <StatusIcon status={msg.status} />}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className={`border-t ${theme.panelSoft} p-3 sm:p-4`}>
+              <div className="flex items-center gap-2 rounded-[1.75rem] border border-inherit p-2 sm:p-3">
+                <Button variant="ghost" size="icon" className="rounded-2xl"><Smile className="h-5 w-5" /></Button>
+                <Button variant="ghost" size="icon" className="rounded-2xl"><Paperclip className="h-5 w-5" /></Button>
+                <div className="flex-1">
+                  <Input
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSend();
+                    }}
+                    className={`h-12 rounded-2xl border-0 shadow-none ${theme.input}`}
+                    placeholder="Mesaj yaz"
+                  />
+                </div>
+                {messageText.trim() ? (
+                  <Button onClick={handleSend} className="h-12 rounded-2xl bg-emerald-500 px-5 font-bold text-emerald-950 hover:bg-emerald-400">
+                    <Send className="mr-2 h-4 w-4" />
+                    Gönder
+                  </Button>
+                ) : (
+                  <Button className="h-12 rounded-2xl bg-emerald-500 px-4 text-emerald-950 hover:bg-emerald-400">
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              <div className={`mt-3 flex items-center gap-2 text-xs ${theme.muted}`}>
+                <MessageSquare className="h-3.5 w-3.5" />
+                Bu demo yerel veriyle çalışır; görünüm ve akış profesyonel ürün hissi vermek için tasarlanmıştır.
+              </div>
+            </div>
+          </section>
+        </motion.div>
+      </div>
     </div>
-  </header>
-
-  <main class="game-container">
-    <canvas id="gameCanvas" width="900" height="500"></canvas>
-
-    <div class="controls">
-      <button id="startBtn">START GAME</button>
-      <button id="restartBtn">RESTART</button>
-    </div>
-
-    <p class="info">
-      Hareket: W A S D veya yön tuşları<br />
-      Amaç: Kırmızı düşmana yakalanmadan ona dokunup puan kazanmak
-    </p>
-  </main>
-
-  <footer>
-    <p>AI Game Engine Demo • UI/UX Modern Design</p>
-  </footer>
-
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    const scoreEl = document.getElementById("score");
-    const levelEl = document.getElementById("level");
-    const startBtn = document.getElementById("startBtn");
-    const restartBtn = document.getElementById("restartBtn");
-
-    let score = 0;
-    let level = 1;
-    let animationId = null;
-    let gameStarted = false;
-
-    const player = {
-      x: 100,
-      y: 250,
-      size: 20,
-      speed: 5,
-      color: "#00e5ff"
-    };
-
-    const enemy = {
-      x: 700,
-      y: 250,
-      size: 20,
-      speed: 2,
-      color: "#ff0033"
-    };
-
-    const keys = {};
-
-    document.addEventListener("keydown", (e) => {
-      keys[e.key] = true;
-    });
-
-    document.addEventListener("keyup", (e) => {
-      keys[e.key] = false;
-    });
-
-    function clampPlayer() {
-      if (player.x < player.size) player.x = player.size;
-      if (player.x > canvas.width - player.size) player.x = canvas.width - player.size;
-      if (player.y < player.size) player.y = player.size;
-      if (player.y > canvas.height - player.size) player.y = canvas.height - player.size;
-    }
-
-    function randomEnemyPosition() {
-      enemy.x = Math.random() * (canvas.width - enemy.size * 2) + enemy.size;
-      enemy.y = Math.random() * (canvas.height - enemy.size * 2) + enemy.size;
-    }
-
-    function resetPositions() {
-      player.x = 100;
-      player.y = 250;
-      enemy.x = 700;
-      enemy.y = 250;
-    }
-
-    function movePlayer() {
-      if (keys["w"] || keys["W"] || keys["ArrowUp"]) player.y -= player.speed;
-      if (keys["s"] || keys["S"] || keys["ArrowDown"]) player.y += player.speed;
-      if (keys["a"] || keys["A"] || keys["ArrowLeft"]) player.x -= player.speed;
-      if (keys["d"] || keys["D"] || keys["ArrowRight"]) player.x += player.speed;
-
-      clampPlayer();
-    }
-
-    function enemyAI() {
-      const dx = player.x - enemy.x;
-      const dy = player.y - enemy.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist > 1) {
-        enemy.x += (dx / dist) * enemy.speed;
-        enemy.y += (dy / dist) * enemy.speed;
-      }
-    }
-
-    function collision() {
-      const dx = player.x - enemy.x;
-      const dy = player.y - enemy.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < player.size + enemy.size) {
-        score++;
-        randomEnemyPosition();
-
-        if (score % 5 === 0) {
-          level++;
-          enemy.speed += 0.5;
-        }
-
-        updateUI();
-      }
-    }
-
-    function updateUI() {
-      scoreEl.textContent = score;
-      levelEl.textContent = level;
-    }
-
-    function drawArena() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = "rgba(255,255,255,0.08)";
-      ctx.lineWidth = 1;
-
-      for (let x = 0; x < canvas.width; x += 50) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-
-      for (let y = 0; y < canvas.height; y += 50) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-    }
-
-    function drawPlayer() {
-      ctx.fillStyle = player.color;
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = player.color;
-      ctx.beginPath();
-      ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    function drawEnemy() {
-      ctx.fillStyle = enemy.color;
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = enemy.color;
-      ctx.beginPath();
-      ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    function drawHudText() {
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
-      ctx.font = "16px Segoe UI";
-      ctx.fillText("Mavi = Oyuncu", 20, 30);
-      ctx.fillText("Kırmızı = Hedef", 20, 52);
-    }
-
-    function gameLoop() {
-      drawArena();
-      movePlayer();
-      enemyAI();
-      collision();
-      drawPlayer();
-      drawEnemy();
-      drawHudText();
-
-      animationId = requestAnimationFrame(gameLoop);
-    }
-
-    startBtn.addEventListener("click", () => {
-      if (gameStarted) return;
-      gameStarted = true;
-      gameLoop();
-    });
-
-    restartBtn.addEventListener("click", () => {
-      score = 0;
-      level = 1;
-      enemy.speed = 2;
-      updateUI();
-      resetPositions();
-      drawArena();
-      drawPlayer();
-      drawEnemy();
-      drawHudText();
-
-      if (!gameStarted) {
-        gameStarted = true;
-        gameLoop();
-      }
-    });
-
-    updateUI();
-    drawArena();
-    drawPlayer();
-    drawEnemy();
-    drawHudText();
-  </script>
-</body>
-</html>
+  );
+}
