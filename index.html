@@ -3,44 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PixelRoom Chat</title>
+  <title>PixelRoom</title>
   <style>
     :root{
-      --bg:#0b141a;
-      --panel:#111b21;
-      --panel-2:#202c33;
-      --line:#2a3942;
-      --soft:#8696a0;
-      --text:#e9edef;
-      --accent:#00a884;
-      --accent-2:#005c4b;
-      --bubble-me:#005c4b;
-      --bubble-other:#202c33;
-      --danger:#ff5f5f;
-      --shadow:0 12px 34px rgba(0,0,0,.35);
-      --radius:16px;
+      --bg:#07111a;
+      --panel:#0f1c28;
+      --panel-2:#162635;
+      --panel-3:#1d3143;
+      --line:rgba(255,255,255,.08);
+      --soft:#8ea3b7;
+      --text:#eef6ff;
+      --accent:#12d3a6;
+      --accent-2:#2aa7ff;
+      --accent-3:#7a6bff;
+      --bubble-me:#114b45;
+      --bubble-other:#1d2e3d;
+      --danger:#ff6262;
+      --shadow:0 14px 40px rgba(0,0,0,.35);
+      --radius:18px;
     }
 
     *{box-sizing:border-box}
     html,body{
-      height:100%;
       margin:0;
+      height:100%;
       font-family:Inter,system-ui,Arial,sans-serif;
-      background:var(--bg);
+      background:
+        radial-gradient(circle at top left, rgba(18,211,166,.18), transparent 22%),
+        radial-gradient(circle at top right, rgba(42,167,255,.18), transparent 22%),
+        linear-gradient(180deg,#07111a,#0a1520 40%, #09131d);
       color:var(--text);
     }
+
     body{overflow:hidden}
     button,input,textarea{font:inherit}
 
     .app{
       height:100vh;
       display:grid;
-      grid-template-columns:360px 1fr;
+      grid-template-columns:340px 1fr;
       min-height:0;
     }
 
     .sidebar{
-      background:var(--panel);
+      background:rgba(10,19,29,.88);
+      backdrop-filter:blur(16px);
       border-right:1px solid var(--line);
       display:flex;
       flex-direction:column;
@@ -49,35 +56,121 @@
       overflow:hidden;
     }
 
-    .chat-area{
-      display:flex;
-      flex-direction:column;
+    .main{
       min-width:0;
       min-height:0;
-      background:linear-gradient(180deg,#0b141a,#111b21);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
     }
 
-    .top{
-      padding:14px 16px;
-      background:var(--panel-2);
-      border-bottom:1px solid var(--line);
+    .topbar{
       display:flex;
       align-items:center;
       gap:12px;
+      padding:14px 16px;
+      background:rgba(15,28,40,.9);
+      border-bottom:1px solid var(--line);
       flex-shrink:0;
     }
 
-    .avatar{
-      width:42px;
-      height:42px;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .logo{
+      width:44px;
+      height:44px;
       border-radius:50%;
       display:grid;
       place-items:center;
-      background:linear-gradient(135deg,#00a884,#1f8fff);
+      font-weight:900;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:white;
+      flex-shrink:0;
+      box-shadow:var(--shadow);
+    }
+
+    .brand-text h1{
+      margin:0;
+      font-size:18px;
+    }
+
+    .brand-text p{
+      margin:3px 0 0;
+      color:var(--soft);
+      font-size:12px;
+    }
+
+    .spacer{flex:1}
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .tab-btn{
+      border:none;
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .tab-btn.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
+
+    .section{
+      display:none;
+      min-height:0;
+      flex:1;
+    }
+
+    .section.active{
+      display:flex;
+      min-height:0;
+    }
+
+    .sidebar-head{
+      padding:14px;
+      border-bottom:1px solid var(--line);
+      flex-shrink:0;
+    }
+
+    .profile-card,.action-card{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:12px;
+      box-shadow:var(--shadow);
+      margin-bottom:12px;
+    }
+
+    .me-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .avatar{
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
       font-weight:800;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
       flex-shrink:0;
-      user-select:none;
     }
 
     .meta{min-width:0}
@@ -90,35 +183,12 @@
     }
 
     .meta p{
-      margin:3px 0 0;
+      margin:4px 0 0;
       color:var(--soft);
       font-size:12px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-    }
-
-    .spacer{flex:1}
-
-    .icon-btn,.send-btn,.primary,.secondary,.danger{
-      border:none;
-      cursor:pointer;
-    }
-
-    .icon-btn{
-      background:transparent;
-      color:var(--soft);
-      font-size:18px;
-      padding:8px;
-      border-radius:10px;
-    }
-
-    .icon-btn:hover{background:rgba(255,255,255,.05)}
-
-    .card{
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--line);
-      flex-shrink:0;
     }
 
     .label{
@@ -129,19 +199,18 @@
       letter-spacing:.08em;
     }
 
-    .input{
+    .input,.search,.composer textarea{
       width:100%;
-      background:#1f2c34;
+      background:var(--panel-3);
       border:1px solid transparent;
       color:var(--text);
-      padding:13px 14px;
-      border-radius:12px;
       outline:none;
-      margin-bottom:10px;
+      border-radius:16px;
+      padding:13px 14px;
     }
 
-    .input:focus,.composer textarea:focus{
-      border-color:#00a884;
+    .input:focus,.search:focus,.composer textarea:focus{
+      border-color:var(--accent);
     }
 
     .row{
@@ -149,74 +218,62 @@
       gap:8px;
     }
 
+    .primary,.secondary,.danger,.send-btn,.small-btn{
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      font-weight:800;
+    }
+
     .primary{
-      background:var(--accent);
+      background:linear-gradient(135deg,var(--accent),#08b6c9);
       color:#fff;
-      border-radius:12px;
       padding:12px 14px;
-      font-weight:700;
       box-shadow:var(--shadow);
     }
 
     .secondary{
-      background:#1f2c34;
+      background:rgba(255,255,255,.06);
       color:var(--text);
-      border-radius:12px;
       padding:12px 14px;
     }
 
     .danger{
-      background:rgba(255,95,95,.12);
-      color:#ff9f9f;
-      border:1px solid rgba(255,95,95,.22);
-      border-radius:12px;
+      background:rgba(255,98,98,.12);
+      color:#ffb1b1;
+      border:1px solid rgba(255,98,98,.22);
       padding:12px 14px;
     }
 
-    .primary:disabled,.secondary:disabled,.danger:disabled,.send-btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-    }
-
-    .search-wrap{
-      padding:10px;
+    .chat-search{
+      padding:10px 14px;
       border-bottom:1px solid var(--line);
       flex-shrink:0;
     }
 
-    .search{
-      width:100%;
-      background:#202c33;
-      border:none;
-      color:var(--text);
-      padding:12px 14px;
-      border-radius:10px;
-      outline:none;
-    }
-
     .chat-list{
       flex:1;
-      overflow:auto;
       min-height:0;
+      overflow:auto;
     }
 
     .chat-item{
       display:flex;
       gap:12px;
+      align-items:center;
       padding:12px 14px;
       border-bottom:1px solid rgba(255,255,255,.04);
       cursor:pointer;
       transition:.15s;
-      align-items:center;
     }
 
     .chat-item:hover,.chat-item.active{
-      background:#1f2c34;
+      background:rgba(255,255,255,.05);
     }
 
     .chat-item .text{
-      min-width:0;
       flex:1;
+      min-width:0;
     }
 
     .chat-item .text h4{
@@ -229,7 +286,7 @@
 
     .chat-item .text p{
       margin:4px 0 0;
-      font-size:13px;
+      font-size:12px;
       color:var(--soft);
       white-space:nowrap;
       overflow:hidden;
@@ -239,21 +296,51 @@
     .chat-item .time{
       font-size:11px;
       color:var(--soft);
-      white-space:nowrap;
       flex-shrink:0;
     }
 
-    .welcome{
-      margin:auto;
-      max-width:560px;
-      text-align:center;
-      padding:28px;
-      color:var(--soft);
+    .chat-panel{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      min-height:0;
+      width:100%;
     }
 
-    .welcome h1{
-      color:var(--text);
-      margin-top:0;
+    .empty{
+      margin:auto;
+      text-align:center;
+      color:var(--soft);
+      padding:30px;
+      max-width:520px;
+    }
+
+    .chat-top{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:rgba(15,28,40,.88);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
+    .badge{
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(18,211,166,.12);
+      border:1px solid rgba(18,211,166,.2);
+      color:#88f1d6;
+      font-size:12px;
+      flex-shrink:0;
+    }
+
+    .typing{
+      min-height:18px;
+      color:var(--soft);
+      font-size:12px;
+      padding:8px 18px 0;
+      flex-shrink:0;
     }
 
     .messages{
@@ -265,7 +352,8 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      background-image:radial-gradient(rgba(255,255,255,.02) 1px, transparent 1px);
+      background:
+        radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
       background-size:20px 20px;
       -webkit-overflow-scrolling:touch;
     }
@@ -289,7 +377,7 @@
     .msg{
       position:relative;
       padding:10px 12px 8px;
-      border-radius:14px;
+      border-radius:16px;
       box-shadow:var(--shadow);
       line-height:1.45;
       word-break:break-word;
@@ -297,25 +385,25 @@
 
     .msg.me{
       background:var(--bubble-me);
-      border-bottom-right-radius:4px;
+      border-bottom-right-radius:5px;
     }
 
     .msg.other{
       background:var(--bubble-other);
       border:1px solid rgba(255,255,255,.05);
-      border-bottom-left-radius:4px;
+      border-bottom-left-radius:5px;
     }
 
     .msg-name{
       font-size:12px;
-      color:#88d7c4;
+      color:#8de9d3;
       margin:0 0 5px;
-      font-weight:700;
+      font-weight:800;
     }
 
     .msg-meta{
       font-size:11px;
-      color:#b7c4cb;
+      color:#b8c9d8;
       margin-top:6px;
       text-align:right;
     }
@@ -340,17 +428,9 @@
       display:block;
     }
 
-    .typing{
-      min-height:18px;
-      padding:8px 18px 0;
-      color:var(--soft);
-      font-size:12px;
-      flex-shrink:0;
-    }
-
     .composer{
       padding:10px 14px 14px;
-      background:var(--panel-2);
+      background:rgba(15,28,40,.92);
       border-top:1px solid var(--line);
       display:flex;
       gap:10px;
@@ -360,91 +440,168 @@
 
     .composer textarea{
       flex:1;
-      min-height:52px;
+      min-height:54px;
       max-height:140px;
       resize:none;
-      background:#2a3942;
-      color:var(--text);
-      border:1px solid transparent;
-      border-radius:14px;
-      padding:14px;
-      outline:none;
     }
 
     .send-btn{
-      width:52px;
-      height:52px;
-      border-radius:14px;
-      background:var(--accent);
+      width:54px;
+      height:54px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
       color:#fff;
-      font-size:20px;
-      font-weight:800;
+      font-size:22px;
+      flex-shrink:0;
       box-shadow:var(--shadow);
-      flex-shrink:0;
     }
 
-    .badge{
-      padding:5px 10px;
+    .game-wrap,.film-wrap{
+      width:100%;
+      min-height:0;
+      overflow:auto;
+      padding:18px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+    }
+
+    .card-big{
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .card-big h3{
+      margin:0 0 10px;
+      font-size:22px;
+    }
+
+    .card-big p{
+      margin:0 0 14px;
+      color:var(--soft);
+      line-height:1.5;
+    }
+
+    .tabu-word{
+      font-size:34px;
+      font-weight:900;
+      margin:10px 0 14px;
+      color:#fff;
+    }
+
+    .forbidden-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .chip{
+      background:rgba(42,167,255,.12);
+      border:1px solid rgba(42,167,255,.2);
+      color:#9fd7ff;
+      padding:8px 10px;
       border-radius:999px;
-      background:rgba(0,168,132,.12);
-      color:#81e6d0;
       font-size:12px;
-      border:1px solid rgba(0,168,132,.2);
-      flex-shrink:0;
+      font-weight:700;
     }
 
-    .hidden{display:none !important}
+    .small-btn{
+      padding:12px 14px;
+      background:linear-gradient(135deg,var(--accent-3),var(--accent-2));
+      color:#fff;
+    }
+
+    .film-card{
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .film-card h4{
+      margin:0;
+      font-size:18px;
+    }
+
+    .film-meta{
+      color:var(--soft);
+      font-size:13px;
+    }
+
+    .film-desc{
+      color:#d6e2ee;
+      font-size:14px;
+      line-height:1.5;
+    }
 
     .messages::-webkit-scrollbar,
-    .chat-list::-webkit-scrollbar{
+    .chat-list::-webkit-scrollbar,
+    .game-wrap::-webkit-scrollbar,
+    .film-wrap::-webkit-scrollbar{
       width:8px;
     }
 
-    .messages::-webkit-scrollbar-track,
-    .chat-list::-webkit-scrollbar-track{
-      background:transparent;
-    }
-
     .messages::-webkit-scrollbar-thumb,
-    .chat-list::-webkit-scrollbar-thumb{
-      background:rgba(255,255,255,0.18);
+    .chat-list::-webkit-scrollbar-thumb,
+    .game-wrap::-webkit-scrollbar-thumb,
+    .film-wrap::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.18);
       border-radius:999px;
     }
 
-    .messages::-webkit-scrollbar-thumb:hover,
-    .chat-list::-webkit-scrollbar-thumb:hover{
-      background:rgba(255,255,255,0.28);
+    .messages::-webkit-scrollbar-track,
+    .chat-list::-webkit-scrollbar-track,
+    .game-wrap::-webkit-scrollbar-track,
+    .film-wrap::-webkit-scrollbar-track{
+      background:transparent;
     }
 
     @media (max-width:900px){
       .app{
-        grid-template-columns:140px 1fr;
+        grid-template-columns:128px 1fr;
       }
 
-      .sidebar,
-      .chat-area{
+      .sidebar,.main{
         display:flex !important;
       }
 
-      .top{
+      .topbar{
         padding:10px;
         gap:8px;
       }
 
-      .card{
-        padding:10px 8px 8px;
+      .brand-text p,
+      .label,
+      #typingText,
+      #meSub{
+        display:none;
       }
 
-      .search-wrap{
-        padding:8px;
+      .tabs{
+        gap:6px;
       }
 
-      .meta h2,.meta h3{
-        font-size:13px;
+      .tab-btn{
+        padding:8px 10px;
+        font-size:12px;
       }
 
-      .meta p{
-        font-size:11px;
+      .sidebar-head{
+        padding:10px 8px;
+      }
+
+      .profile-card,.action-card{
+        padding:10px;
+        border-radius:18px;
       }
 
       .row{
@@ -454,6 +611,10 @@
       .input,.search,.primary,.secondary,.danger{
         font-size:12px;
         padding:10px 12px;
+      }
+
+      .chat-search{
+        padding:8px;
       }
 
       .chat-item{
@@ -467,10 +628,6 @@
         width:36px;
         height:36px;
         font-size:12px;
-      }
-
-      .chat-item .text{
-        width:100%;
       }
 
       .chat-item .text h4{
@@ -509,43 +666,37 @@
         font-size:18px;
       }
 
-      #meSub,
-      #typingText,
-      .card .label{
-        display:none;
+      .badge{
+        font-size:10px;
+        padding:4px 8px;
       }
 
-      #backBtn{
-        display:none !important;
+      .card-big h3{
+        font-size:18px;
+      }
+
+      .tabu-word{
+        font-size:28px;
       }
     }
 
     @media (max-width:650px){
       .app{
-        grid-template-columns:120px 1fr;
+        grid-template-columns:112px 1fr;
       }
 
-      .avatar{
+      .logo,.avatar{
         width:34px;
         height:34px;
         font-size:12px;
       }
 
-      .chat-item{
-        padding:8px 6px;
+      .brand-text h1{
+        font-size:15px;
       }
 
-      .chat-item .text h4{
-        font-size:11px;
-      }
-
-      .top{
+      .chat-top,.top{
         padding:8px;
-      }
-
-      .badge{
-        font-size:10px;
-        padding:4px 8px;
       }
 
       .meta p{
@@ -556,66 +707,111 @@
 </head>
 <body>
   <div class="app">
-    <aside id="sidebar" class="sidebar">
-      <div class="top">
-        <div id="meAvatar" class="avatar">?</div>
-        <div class="meta">
-          <h2 id="meName">PixelRoom</h2>
-          <p id="meSub">Bağlanıyor...</p>
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <div class="profile-card">
+          <div class="me-row">
+            <div id="meAvatar" class="avatar">?</div>
+            <div class="meta">
+              <h2 id="meName">PixelRoom</h2>
+              <p id="meSub">Bağlanıyor...</p>
+            </div>
+          </div>
+          <input id="nameInput" class="input" maxlength="20" placeholder="Görünen adın" />
+          <input id="usernameInput" class="input" maxlength="20" placeholder="Kullanıcı adın" />
+          <button id="saveProfileBtn" class="primary" style="width:100%">Profili Kaydet</button>
         </div>
-        <div class="spacer"></div>
-        <button id="logoutBtn" class="icon-btn" title="Çık">⎋</button>
-      </div>
 
-      <div class="card">
-        <p class="label">Profil</p>
-        <input id="nameInput" class="input" maxlength="20" placeholder="Görünen adın" />
-        <input id="usernameInput" class="input" maxlength="20" placeholder="Kullanıcı adın (örn barbaros)" />
-        <button id="saveProfileBtn" class="primary" style="width:100%">Profili Kaydet</button>
-      </div>
-
-      <div class="card">
-        <p class="label">Yeni Sohbet</p>
-        <input id="newChatInput" class="input" maxlength="20" placeholder="Arkadaş kullanıcı adı" />
-        <div class="row">
-          <button id="newChatBtn" class="primary" style="flex:1">Sohbet Aç</button>
-          <button id="refreshChatsBtn" class="secondary">Yenile</button>
+        <div class="action-card">
+          <input id="newChatInput" class="input" maxlength="20" placeholder="Arkadaş kullanıcı adı" />
+          <div class="row">
+            <button id="newChatBtn" class="primary" style="flex:1">Sohbet Aç</button>
+            <button id="refreshChatsBtn" class="secondary">Yenile</button>
+          </div>
         </div>
       </div>
 
-      <div class="search-wrap">
+      <div class="chat-search">
         <input id="chatSearch" class="search" placeholder="Sohbetlerde ara" />
       </div>
 
       <div id="chatList" class="chat-list"></div>
     </aside>
 
-    <main id="chatArea" class="chat-area">
-      <div id="emptyChat" class="welcome">
-        <h1>PixelRoom Chat</h1>
-        <p>Önce profilini kaydet. Sonra arkadaşının kullanıcı adını yazıp sohbet aç.</p>
-      </div>
-
-      <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
-        <div class="top">
-          <button id="backBtn" class="icon-btn hidden">←</button>
-          <div id="chatAvatar" class="avatar">?</div>
-          <div class="meta">
-            <h3 id="chatName">Sohbet</h3>
-            <p id="chatSub">Bağlanıyor...</p>
+    <main class="main">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">P</div>
+          <div class="brand-text">
+            <h1>PixelRoom</h1>
+            <p>Chat + Oyun + Film</p>
           </div>
-          <div class="spacer"></div>
-          <span id="presenceBadge" class="badge">offline</span>
         </div>
-
-        <div id="typingText" class="typing"></div>
-        <div id="messages" class="messages"></div>
-
-        <div class="composer">
-          <textarea id="messageInput" placeholder="Mesaj yaz"></textarea>
-          <button id="sendBtn" class="send-btn">➤</button>
+        <div class="spacer"></div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="chat">Chat</button>
+          <button class="tab-btn" data-tab="tabu">Tabu</button>
+          <button class="tab-btn" data-tab="film">Film</button>
         </div>
+        <button id="logoutBtn" class="icon-btn" title="Çık">⎋</button>
       </div>
+
+      <section id="chatSection" class="section active">
+        <div class="chat-panel">
+          <div id="emptyChat" class="empty">
+            <h2>PixelRoom hazır</h2>
+            <p>Soldan profilini kaydet, sonra bir arkadaş kullanıcı adı ile sohbet aç.</p>
+          </div>
+
+          <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
+            <div class="chat-top">
+              <div id="chatAvatar" class="avatar">?</div>
+              <div class="meta">
+                <h3 id="chatName">Sohbet</h3>
+                <p id="chatSub">Bağlanıyor...</p>
+              </div>
+              <div class="spacer"></div>
+              <span id="presenceBadge" class="badge">offline</span>
+            </div>
+
+            <div id="typingText" class="typing"></div>
+            <div id="messages" class="messages"></div>
+
+            <div class="composer">
+              <textarea id="messageInput" placeholder="Mesaj yaz"></textarea>
+              <button id="sendBtn" class="send-btn">➤</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tabuSection" class="section">
+        <div class="game-wrap">
+          <div class="grid">
+            <div class="card-big">
+              <h3>Tabu Kartı</h3>
+              <p>Kelimeyi anlat ama yasaklı kelimeleri söyleme.</p>
+              <div id="tabuWord" class="tabu-word">Telefon</div>
+              <div id="forbiddenList" class="forbidden-list"></div>
+              <div style="margin-top:14px;">
+                <button id="nextTabuBtn" class="small-btn">Yeni Kart</button>
+              </div>
+            </div>
+
+            <div class="card-big">
+              <h3>Nasıl Oynanır?</h3>
+              <p>Bir kişi karttaki ana kelimeyi anlatır. Takım arkadaşı tahmin eder. Yasaklı kelimeleri söylersen tur bozulur.</p>
+              <p>Süre tutmak için telefonun kronometresini açabilirsin. İstersen bunu sonra kodla süreli hale de getiririm.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="filmSection" class="section">
+        <div class="film-wrap">
+          <div class="grid" id="filmGrid"></div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -644,14 +840,32 @@
 
     const $ = id => document.getElementById(id);
     const els = {
-      sidebar: $("sidebar"), chatArea: $("chatArea"),
-      meAvatar: $("meAvatar"), meName: $("meName"), meSub: $("meSub"), logoutBtn: $("logoutBtn"),
-      nameInput: $("nameInput"), usernameInput: $("usernameInput"), saveProfileBtn: $("saveProfileBtn"),
-      newChatInput: $("newChatInput"), newChatBtn: $("newChatBtn"), refreshChatsBtn: $("refreshChatsBtn"),
-      chatSearch: $("chatSearch"), chatList: $("chatList"),
-      emptyChat: $("emptyChat"), activeChatWrap: $("activeChatWrap"),
-      backBtn: $("backBtn"), chatAvatar: $("chatAvatar"), chatName: $("chatName"), chatSub: $("chatSub"), presenceBadge: $("presenceBadge"),
-      typingText: $("typingText"), messages: $("messages"), messageInput: $("messageInput"), sendBtn: $("sendBtn")
+      meAvatar: $("meAvatar"),
+      meName: $("meName"),
+      meSub: $("meSub"),
+      logoutBtn: $("logoutBtn"),
+      nameInput: $("nameInput"),
+      usernameInput: $("usernameInput"),
+      saveProfileBtn: $("saveProfileBtn"),
+      newChatInput: $("newChatInput"),
+      newChatBtn: $("newChatBtn"),
+      refreshChatsBtn: $("refreshChatsBtn"),
+      chatSearch: $("chatSearch"),
+      chatList: $("chatList"),
+      emptyChat: $("emptyChat"),
+      activeChatWrap: $("activeChatWrap"),
+      chatAvatar: $("chatAvatar"),
+      chatName: $("chatName"),
+      chatSub: $("chatSub"),
+      presenceBadge: $("presenceBadge"),
+      typingText: $("typingText"),
+      messages: $("messages"),
+      messageInput: $("messageInput"),
+      sendBtn: $("sendBtn"),
+      tabuWord: $("tabuWord"),
+      forbiddenList: $("forbiddenList"),
+      nextTabuBtn: $("nextTabuBtn"),
+      filmGrid: $("filmGrid")
     };
 
     let me = null;
@@ -666,6 +880,25 @@
     let currentChatMetaRef = null;
     let lastNotifiedMessageId = null;
     let pressTimer = null;
+
+    const tabuCards = [
+      { word:"Telefon", forbidden:["arama","mesaj","ekran","şarj","mobil"] },
+      { word:"Futbol", forbidden:["top","gol","kaleci","maç","saha"] },
+      { word:"Minecraft", forbidden:["blok","kazmak","creeper","survival","oyun"] },
+      { word:"Pizza", forbidden:["peynir","hamur","dilim","fırın","yemek"] },
+      { word:"Öğretmen", forbidden:["okul","ders","sınıf","tahta","öğrenci"] },
+      { word:"Film", forbidden:["sinema","izlemek","oyuncu","sahne","ekran"] },
+      { word:"Bilgisayar", forbidden:["klavye","mouse","ekran","oyun","internet"] }
+    ];
+
+    const films = [
+      { title:"Spider-Man: Into the Spider-Verse", type:"Animasyon / Macera", year:"2018", desc:"Hızlı, yaratıcı ve aşırı keyifli bir örümcek evreni filmi." },
+      { title:"The Mitchells vs. The Machines", type:"Animasyon / Komedi", year:"2021", desc:"Ailece izlenebilecek, komik ve enerjik bir teknoloji-kaos filmi." },
+      { title:"Free Guy", type:"Aksiyon / Komedi", year:"2021", desc:"Oyun dünyası havası veren eğlenceli ve hafif bir film." },
+      { title:"Big Hero 6", type:"Animasyon / Bilim Kurgu", year:"2014", desc:"Hem duygulu hem de eğlenceli, teknoloji temalı güzel bir yapım." },
+      { title:"The Super Mario Bros. Movie", type:"Animasyon / Macera", year:"2023", desc:"Renkli, hızlı ve oyun sevenler için baya keyifli." },
+      { title:"Guardians of the Galaxy", type:"Bilim Kurgu / Macera", year:"2014", desc:"Ekip, mizah ve aksiyon seviyorsan iyi gider." }
+    ];
 
     function esc(str=""){
       return str
@@ -699,24 +932,8 @@
     }
 
     function autoGrow(){
-      els.messageInput.style.height = "52px";
+      els.messageInput.style.height = "54px";
       els.messageInput.style.height = Math.min(140, els.messageInput.scrollHeight) + "px";
-    }
-
-    function mobileMode(){
-      return window.innerWidth <= 900;
-    }
-
-    function showChatMobile(){
-      els.sidebar.classList.remove("mobile-hidden");
-      els.chatArea.classList.remove("mobile-hidden");
-      els.backBtn.classList.add("hidden");
-    }
-
-    function showSidebarMobile(){
-      els.sidebar.classList.remove("mobile-hidden");
-      els.chatArea.classList.remove("mobile-hidden");
-      els.backBtn.classList.add("hidden");
     }
 
     function updateHeader(){
@@ -725,6 +942,33 @@
       els.meSub.textContent = myProfile?.username ? `@${myProfile.username}` : "Profilini ayarla";
       els.nameInput.value = myProfile?.name || "";
       els.usernameInput.value = myProfile?.username || "";
+    }
+
+    function switchTab(tabName){
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+      if(tabName === "chat") $("chatSection").classList.add("active");
+      if(tabName === "tabu") $("tabuSection").classList.add("active");
+      if(tabName === "film") $("filmSection").classList.add("active");
+    }
+
+    function renderFilms(){
+      els.filmGrid.innerHTML = films.map(f => `
+        <div class="film-card">
+          <h4>${esc(f.title)}</h4>
+          <div class="film-meta">${esc(f.type)} • ${esc(f.year)}</div>
+          <div class="film-desc">${esc(f.desc)}</div>
+        </div>
+      `).join("");
+    }
+
+    function randomTabu(){
+      const card = tabuCards[Math.floor(Math.random() * tabuCards.length)];
+      els.tabuWord.textContent = card.word;
+      els.forbiddenList.innerHTML = card.forbidden.map(w => `<span class="chip">${esc(w)}</span>`).join("");
     }
 
     async function requestNotificationPermission(){
@@ -807,7 +1051,7 @@
         "piç","pic","sik","sikerim","siktir","siktirgit","yarak","yarrak",
         "ibne","göt","got","amına","amina","amcık","amcik",
         "pezevenk","puşt","pust","ananı","anani","bacını","bacini",
-        "kahpe","salak","aptal"
+        "kahpe","salak","aptal","mal"
       ];
 
       let result = text;
@@ -950,6 +1194,7 @@
       els.newChatInput.value = "";
       await loadChats();
       openChat(chatId, targetProfile);
+      switchTab("chat");
     }
 
     async function loadChats(){
@@ -995,7 +1240,7 @@
           </div>
           <div class="time">${formatListTime(c.lastMessageAt)}</div>
         </div>
-      `).join("") || `<div class="welcome" style="padding:22px">Henüz sohbet yok.</div>`;
+      `).join("") || `<div class="empty" style="padding:22px">Henüz sohbet yok.</div>`;
 
       [...els.chatList.querySelectorAll(".chat-item")].forEach(item => {
         item.onclick = async () => {
@@ -1007,6 +1252,7 @@
           if(!profileSnap.exists()) return;
 
           openChat(item.dataset.chat, profileSnap.val());
+          switchTab("chat");
         };
       });
     }
@@ -1039,8 +1285,6 @@
       els.presenceBadge.textContent = "offline";
       els.typingText.textContent = "";
       els.messages.innerHTML = "";
-
-      showChatMobile();
 
       currentPresenceRef = ref(db, `presence/${peerProfile.uid}`);
       onValue(currentPresenceRef, snap => {
@@ -1083,7 +1327,7 @@
               </div>
             </div>
           `;
-        }).join("") || `<div class="welcome" style="padding:28px">Henüz mesaj yok. İlk mesajı sen at.</div>`;
+        }).join("") || `<div class="empty" style="padding:28px">Henüz mesaj yok. İlk mesajı sen at.</div>`;
 
         attachLongPressEvents();
         els.messages.scrollTop = els.messages.scrollHeight;
@@ -1156,6 +1400,10 @@
       location.reload();
     }
 
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
     els.saveProfileBtn.onclick = async () => {
       await requestNotificationPermission();
       await saveProfile();
@@ -1175,7 +1423,7 @@
     };
 
     els.logoutBtn.onclick = logOut;
-    els.backBtn.onclick = showSidebarMobile;
+    els.nextTabuBtn.onclick = randomTabu;
 
     els.messageInput.addEventListener("input", () => {
       autoGrow();
@@ -1201,14 +1449,10 @@
       }
     });
 
-    window.addEventListener("resize", () => {
-      els.sidebar.classList.remove("mobile-hidden");
-      els.chatArea.classList.remove("mobile-hidden");
-      els.backBtn.classList.add("hidden");
-    });
-
     (async function init(){
       try{
+        renderFilms();
+        randomTabu();
         await ensureAuth();
         await loadMyProfile();
         await savePresence();
