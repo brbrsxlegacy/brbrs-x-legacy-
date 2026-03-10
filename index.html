@@ -3,756 +3,1263 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PixelRoom Chat</title>
+  <title>PixelRoom</title>
   <style>
     :root {
       --bg: #0b141a;
       --panel: #111b21;
       --panel-2: #202c33;
+      --panel-3: #182229;
       --text: #e9edef;
-      --muted: #8696a0;
+      --muted: #8fa3ad;
+      --line: rgba(255,255,255,0.07);
       --accent: #25d366;
-      --line: rgba(255,255,255,0.08);
-      --me: #005c4b;
-      --them: #202c33;
+      --accent-2: #12a06f;
       --danger: #ff7b7b;
+      --bubble-me: #005c4b;
+      --bubble-them: #202c33;
+      --shadow: 0 24px 70px rgba(0,0,0,0.35);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, Arial, sans-serif; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    html, body { height: 100%; }
     body {
-      min-height: 100vh;
-      background: linear-gradient(180deg, #101d24 0%, #0a1217 100%);
+      background:
+        radial-gradient(circle at top left, rgba(37,211,102,0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(18,160,111,0.08), transparent 20%),
+        linear-gradient(180deg, #0f1c22 0%, #091015 100%);
       color: var(--text);
+      overflow: hidden;
     }
+
+    body.light {
+      --bg: #efeae2;
+      --panel: #f7f8fa;
+      --panel-2: #ffffff;
+      --panel-3: #eef1f4;
+      --text: #111b21;
+      --muted: #667781;
+      --line: rgba(17,27,33,0.08);
+      --bubble-me: #d9fdd3;
+      --bubble-them: #ffffff;
+      background: linear-gradient(180deg, #dfe7ec 0%, #eef3f6 100%);
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+
     .app {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 16px;
+      padding: 18px;
     }
+
     .shell {
-      width: min(1400px, 100%);
-      min-height: 94vh;
-      border-radius: 26px;
+      width: min(1480px, 100%);
+      height: min(94vh, 980px);
+      border-radius: 34px;
       overflow: hidden;
-      background: rgba(8, 13, 17, 0.9);
       border: 1px solid var(--line);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+      box-shadow: var(--shadow);
+      background: rgba(7,12,15,0.82);
+      backdrop-filter: blur(18px);
     }
-    .hidden { display: none !important; }
-    .auth {
-      min-height: 94vh;
+
+    .auth-screen {
+      height: 100%;
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1.08fr 0.92fr;
     }
-    .auth-hero {
-      padding: 56px;
-      background:
-        radial-gradient(circle at top left, rgba(37,211,102,0.16), transparent 24%),
-        linear-gradient(145deg, #0f171d, #132028);
-      border-right: 1px solid var(--line);
+
+    .hero {
+      padding: 58px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       gap: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(37,211,102,0.18), transparent 25%),
+        radial-gradient(circle at 90% 10%, rgba(18,160,111,0.12), transparent 18%),
+        linear-gradient(145deg, #0d171d, #11212a);
+      border-right: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
     }
-    .badge {
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -80px;
+      width: 260px;
+      height: 260px;
+      background: rgba(37,211,102,0.08);
+      filter: blur(40px);
+      border-radius: 50%;
+    }
+
+    .hero-badge {
       width: fit-content;
-      padding: 10px 14px;
+      padding: 10px 16px;
       border-radius: 999px;
       background: rgba(37,211,102,0.1);
-      border: 1px solid rgba(37,211,102,0.2);
+      border: 1px solid rgba(37,211,102,0.22);
       color: #95efb6;
       font-size: 14px;
       font-weight: 700;
     }
-    .auth-hero h1 {
-      font-size: clamp(34px, 5vw, 66px);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      max-width: 10ch;
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
-    .auth-hero p {
+
+    .brand-icon {
+      width: 66px;
+      height: 66px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #69f79b);
+      color: #062111;
+      box-shadow: 0 18px 40px rgba(37,211,102,0.22);
+      font-weight: 900;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 32px;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 4px;
       color: var(--muted);
-      line-height: 1.8;
-      max-width: 58ch;
+      font-size: 15px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 5vw, 74px);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+      max-width: 9ch;
+    }
+
+    .hero p {
+      max-width: 60ch;
+      color: var(--muted);
+      line-height: 1.85;
       font-size: 17px;
     }
-    .hero-cards {
+
+    .hero-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
+      margin-top: 8px;
     }
+
     .hero-card {
       padding: 18px;
-      border-radius: 20px;
+      border-radius: 22px;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--line);
     }
-    .hero-card strong { display: block; margin-bottom: 8px; font-size: 20px; }
+
+    .hero-card strong { display: block; font-size: 22px; margin-bottom: 8px; }
     .hero-card span { color: var(--muted); font-size: 14px; line-height: 1.6; }
-    .auth-panel {
+
+    .auth-pane {
+      padding: 36px;
       display: grid;
       place-items: center;
-      padding: 30px;
-      background: linear-gradient(180deg, #0f171d, #0c1318);
+      background: linear-gradient(180deg, #0f171c, #0b1217);
     }
+
     .auth-card {
-      width: min(520px, 100%);
+      width: min(560px, 100%);
       padding: 32px;
-      border-radius: 28px;
-      background: var(--panel);
+      border-radius: 30px;
+      background: rgba(17,27,33,0.96);
       border: 1px solid var(--line);
+      box-shadow: var(--shadow);
     }
-    .auth-card h2 { font-size: 32px; margin-bottom: 10px; }
-    .auth-card p { color: var(--muted); line-height: 1.7; margin-bottom: 22px; }
-    .tabs {
+
+    .top-tools {
       display: flex;
-      gap: 8px;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .top-tools h2 {
+      font-size: 34px;
+      margin-bottom: 8px;
+      letter-spacing: -0.04em;
+    }
+
+    .top-tools p { color: var(--muted); line-height: 1.7; font-size: 15px; }
+
+    .theme-btn, .tab-btn, .icon-btn, .send-btn, .primary-btn, .secondary-btn {
+      border: none;
+      transition: 0.2s ease;
+    }
+
+    .theme-btn, .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .tab-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
       margin-bottom: 18px;
     }
-    .tab {
-      flex: 1;
-      height: 46px;
-      border-radius: 16px;
+
+    .tab-btn {
+      height: 56px;
+      border-radius: 18px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.03);
       color: var(--text);
-      cursor: pointer;
-      font-weight: 700;
+      font-size: 17px;
+      font-weight: 800;
     }
-    .tab.active {
-      background: rgba(37,211,102,0.14);
-      border-color: rgba(37,211,102,0.26);
-      color: #9af0ba;
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(37,211,102,0.22), rgba(18,160,111,0.18));
+      border-color: rgba(37,211,102,0.28);
+      color: #aaf7c2;
     }
+
     .form {
       display: grid;
-      gap: 14px;
+      gap: 16px;
     }
-    .field { display: grid; gap: 8px; }
-    .field label { color: var(--muted); font-size: 14px; font-weight: 600; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
     .field input {
-      height: 52px;
-      border-radius: 16px;
+      width: 100%;
+      height: 56px;
+      border-radius: 18px;
       border: 1px solid var(--line);
-      background: #0c1419;
+      background: #0b1419;
       color: var(--text);
-      padding: 0 14px;
+      padding: 0 16px;
       outline: none;
+      font-size: 16px;
     }
+
     .field input:focus { border-color: rgba(37,211,102,0.36); }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .error, .info {
+
+    .password-wrap { position: relative; }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .error, .note {
       padding: 14px 16px;
-      border-radius: 16px;
+      border-radius: 18px;
       font-size: 14px;
       line-height: 1.6;
     }
+
     .error {
       display: none;
       background: rgba(255,123,123,0.12);
-      border: 1px solid rgba(255,123,123,0.24);
-      color: #ffabab;
+      border: 1px solid rgba(255,123,123,0.22);
+      color: #ffa4a4;
     }
+
     .error.show { display: block; }
-    .info {
+    .note {
       background: rgba(37,211,102,0.1);
-      border: 1px solid rgba(37,211,102,0.18);
-      color: #95efb6;
+      border: 1px solid rgba(37,211,102,0.2);
+      color: #9af0b9;
     }
-    .primary {
-      height: 52px;
-      border: none;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), #73f08b);
-      color: #052112;
+
+    .primary-btn, .secondary-btn {
+      height: 56px;
+      border-radius: 18px;
+      font-size: 16px;
       font-weight: 800;
-      cursor: pointer;
     }
-    .chat {
-      min-height: 94vh;
-      display: grid;
-      grid-template-columns: 360px 1fr;
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--accent), #69f79b);
+      color: #042010;
     }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .chat-screen {
+      display: none;
+      height: 100%;
+      grid-template-columns: 390px 1fr;
+    }
+
     .sidebar {
-      background: var(--panel);
-      border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
-      min-height: 94vh;
+      min-width: 0;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
     }
+
     .sidebar-top, .chat-top {
       padding: 16px;
-      border-bottom: 1px solid var(--line);
       background: var(--panel-2);
+      border-bottom: 1px solid var(--line);
     }
-    .identity {
+
+    .row-between {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
     }
-    .left-id {
+
+    .person {
       display: flex;
       align-items: center;
       gap: 12px;
       min-width: 0;
     }
+
     .avatar {
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       display: grid;
       place-items: center;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--accent), #0ea67c);
       color: #04150d;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       flex-shrink: 0;
     }
-    .meta strong {
-      display: block;
-      font-size: 15px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+    .avatar.alt-1 { background: linear-gradient(135deg, #22c55e, #14b8a6); color: white; }
+    .avatar.alt-2 { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+    .avatar.alt-3 { background: linear-gradient(135deg, #d946ef, #ec4899); color: white; }
+    .avatar.alt-4 { background: linear-gradient(135deg, #8b5cf6, #4f46e5); color: white; }
+    .avatar.alt-5 { background: linear-gradient(135deg, #f97316, #ef4444); color: white; }
+    .avatar.alt-6 { background: linear-gradient(135deg, #06b6d4, #0ea5e9); color: white; }
+
+    .person-text { min-width: 0; }
+    .person-text strong,
+    .chat-preview strong,
+    .chat-preview p,
+    .header-text strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .person-text strong,
+    .header-text strong { display: block; font-size: 15px; }
+    .person-text span,
+    .header-text span,
+    .chat-preview small,
+    .chat-preview p,
+    .chat-time { color: var(--muted); font-size: 13px; }
+
+    .tool-row { display: flex; gap: 8px; }
+
+    .search-box {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 12px;
     }
-    .meta span {
-      color: var(--muted);
-      font-size: 13px;
+
+    .search-box input {
+      width: 100%;
+      height: 48px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #0b1419;
+      color: var(--text);
+      padding: 0 14px;
+      outline: none;
     }
-    .actions { display: flex; gap: 8px; }
-    .icon {
-      width: 40px;
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .quick-actions button {
       height: 40px;
       border-radius: 14px;
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.04);
       color: var(--text);
-      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
     }
-    .search { padding: 14px; border-bottom: 1px solid var(--line); }
-    .search input, .composer input {
-      width: 100%;
-      height: 48px;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: #0c1419;
-      color: var(--text);
-      padding: 0 14px;
-      outline: none;
-    }
+
     .chat-list {
-      flex: 1;
       overflow-y: auto;
+      padding: 10px;
       display: grid;
       gap: 8px;
-      padding: 10px;
+      min-height: 0;
     }
+
     .chat-item {
       width: 100%;
-      text-align: left;
       padding: 12px;
-      border-radius: 18px;
+      border-radius: 20px;
       border: 1px solid transparent;
       background: transparent;
       color: var(--text);
-      cursor: pointer;
+      text-align: left;
     }
+
+    .chat-item:hover { background: rgba(255,255,255,0.03); }
     .chat-item.active {
       background: rgba(37,211,102,0.12);
       border-color: rgba(37,211,102,0.18);
     }
-    .chat-row { display: flex; gap: 12px; align-items: start; }
-    .small-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 15px;
+
+    .chat-item-inner {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .chat-preview { min-width: 0; flex: 1; }
+    .chat-preview p { margin-top: 4px; }
+
+    .chat-side {
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .unread {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
       display: grid;
       place-items: center;
-      font-weight: 800;
-      color: white;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, #4ade80, #06b6d4);
+      background: var(--accent);
+      color: #062111;
+      font-size: 11px;
+      font-weight: 900;
     }
-    .chat-text { min-width: 0; flex: 1; }
-    .chat-text strong, .chat-text p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .chat-text small, .chat-text p { color: var(--muted); }
-    .main {
+
+    .chat-panel {
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      min-height: 94vh;
       background: var(--bg);
     }
+
+    .chat-header-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .header-text { min-width: 0; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
     .messages {
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       gap: 12px;
       background:
-        radial-gradient(circle at top left, rgba(37,211,102,0.05), transparent 20%),
-        var(--bg);
+        linear-gradient(rgba(11,20,26,0.72), rgba(11,20,26,0.72)),
+        radial-gradient(circle at center, rgba(255,255,255,0.02), transparent 50%);
+      min-height: 0;
     }
-    .msg {
-      max-width: min(80%, 650px);
-      padding: 12px 14px;
-      border-radius: 18px;
-      font-size: 15px;
-      line-height: 1.7;
+
+    .day-sep {
+      align-self: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(32,44,51,0.8);
       border: 1px solid var(--line);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      color: var(--muted);
+      font-size: 12px;
     }
-    .msg.them { align-self: flex-start; background: var(--them); }
-    .msg.me { align-self: flex-end; background: var(--me); }
-    .msg-meta {
+
+    .msg {
+      max-width: min(76%, 700px);
+      padding: 12px 14px;
+      border-radius: 20px;
+      line-height: 1.75;
+      font-size: 15px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      border: 1px solid rgba(255,255,255,0.03);
+      animation: pop 0.18s ease;
+      word-break: break-word;
+    }
+
+    .msg.me {
+      align-self: flex-end;
+      background: var(--bubble-me);
+      border-top-right-radius: 8px;
+    }
+
+    .msg.them {
+      align-self: flex-start;
+      background: var(--bubble-them);
+      border-top-left-radius: 8px;
+    }
+
+    .meta {
       margin-top: 8px;
       display: flex;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 6px;
       font-size: 11px;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.72);
     }
+
+    body.light .meta { color: rgba(17,27,33,0.55); }
+
+    .composer-wrap {
+      padding: 14px;
+      background: var(--panel-2);
+      border-top: 1px solid var(--line);
+    }
+
     .composer {
       display: flex;
       gap: 10px;
       align-items: center;
-      padding: 14px;
-      border-top: 1px solid var(--line);
-      background: var(--panel-2);
     }
-    .composer .grow { flex: 1; }
-    .send {
-      height: 48px;
-      padding: 0 18px;
-      border-radius: 16px;
-      border: none;
-      background: linear-gradient(135deg, var(--accent), #73f08b);
-      color: #052112;
-      font-weight: 800;
-      cursor: pointer;
+
+    .composer input {
+      flex: 1;
+      min-width: 0;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #0b1419;
+      color: var(--text);
+      padding: 0 16px;
+      outline: none;
     }
-    .subbar {
-      padding: 0 18px 14px;
+
+    .send-btn {
+      height: 52px;
+      padding: 0 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--accent), #69f79b);
+      color: #042010;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .composer-note {
+      margin-top: 10px;
       color: var(--muted);
       font-size: 12px;
+      padding-left: 2px;
     }
-    @media (max-width: 980px) {
-      .auth { grid-template-columns: 1fr; }
-      .auth-hero { display: none; }
-      .chat { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .shell { min-height: 100vh; border-radius: 0; }
+
+    .mobile-back { display: none; }
+
+    @keyframes pop {
+      from { transform: translateY(6px); opacity: 0.7; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 1100px) {
+      .auth-screen { grid-template-columns: 1fr; }
+      .hero { display: none; }
+    }
+
+    @media (max-width: 820px) {
       .app { padding: 0; }
+      .shell { width: 100%; height: 100vh; border: none; border-radius: 0; }
+      .chat-screen { grid-template-columns: 1fr; }
+      .sidebar.mobile-hide { display: none; }
+      .chat-panel.mobile-hide { display: none; }
+      .mobile-back { display: inline-flex; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .msg { max-width: 88%; }
+      .auth-pane { padding: 18px; }
+      .auth-card { padding: 22px; }
+      .quick-actions { grid-template-columns: 1fr 1fr 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="app">
     <div class="shell">
-      <section class="auth" id="authScreen">
-        <div class="auth-hero">
-          <div class="badge">Firebase destekli gerçek giriş ve mesajlaşma</div>
-          <h1>Arkadaş ekleyip konuşabileceğin sistem</h1>
+      <section class="auth-screen" id="authScreen">
+        <div class="hero">
+          <div class="hero-badge">PixelRoom • Mesajlaşma, odalar ve modern giriş deneyimi</div>
+          <div class="brand-row">
+            <div class="brand-icon">PR</div>
+            <div class="brand-copy">
+              <strong>PixelRoom</strong>
+              <span>WhatsApp tarzı ama daha modern bir sosyal sohbet alanı</span>
+            </div>
+          </div>
+          <h1>Arkadaşlarınla odalarda konuş</h1>
           <p>
-            Bu sürüm Firebase Authentication ve Cloud Firestore için hazırlandı.
-            Kayıt olma, giriş yapma, kullanıcı arama, sohbet açma ve gerçek zamanlı mesajlaşma akışı tek dosyada kurulu.
+            Bu sürüm sıfırdan kuruldu. Giriş yapma, kayıt olma, arkadaş listesi, oda sistemi,
+            mesaj gönderme, tema değişimi, otomatik demo cevapları ve yerel hafıza desteği var.
+            Yani Firebase beklemeden direkt çalışan, sağlam bir demo uygulama.
           </p>
-          <div class="hero-cards">
-            <div class="hero-card"><strong>Auth</strong><span>Email/şifre ile hesap açma ve giriş</span></div>
-            <div class="hero-card"><strong>Friends</strong><span>Kullanıcı e-postası ile sohbet başlatma</span></div>
-            <div class="hero-card"><strong>Live Chat</strong><span>Firestore ile gerçek zamanlı mesajlar</span></div>
+          <div class="hero-grid">
+            <div class="hero-card"><strong>6 Oda</strong><span>Hazır arkadaş ve ekip sohbetleri</span></div>
+            <div class="hero-card"><strong>Canlı Akış</strong><span>Mesaj yazınca anında listede güncellenir</span></div>
+            <div class="hero-card"><strong>Mobil Uyum</strong><span>Telefonda liste ve sohbet ayrı görünür</span></div>
           </div>
         </div>
 
-        <div class="auth-panel">
+        <div class="auth-pane">
           <div class="auth-card">
-            <h2>PixelRoom Chat</h2>
-            <p>Önce hesap aç ya da giriş yap. Sonra arkadaşının e-postasıyla sohbet başlat.</p>
-            <div class="tabs">
-              <button class="tab active" id="loginTab">Giriş Yap</button>
-              <button class="tab" id="registerTab">Kayıt Ol</button>
+            <div class="top-tools">
+              <div>
+                <h2>PixelRoom</h2>
+                <p>Hesabını oluştur ya da giriş yap. Sonra odalara katıl ve konuşmaya başla.</p>
+              </div>
+              <button class="theme-btn" id="themeBtn">◐</button>
             </div>
-            <div class="form">
-              <div class="row">
+
+            <div class="tab-switch">
+              <button class="tab-btn active" id="loginTab">Giriş Yap</button>
+              <button class="tab-btn" id="registerTab">Kayıt Ol</button>
+            </div>
+
+            <div class="form" id="authForm">
+              <div class="grid-2">
                 <div class="field">
                   <label>Görünen ad</label>
-                  <input id="displayName" type="text" placeholder="Barbaros" />
+                  <input id="displayNameInput" type="text" placeholder="Barbaros" value="Barbaros" />
                 </div>
-                <div class="field">
+                <div class="field" id="usernameField">
                   <label>Kullanıcı adı</label>
-                  <input id="username" type="text" placeholder="barbaros" />
+                  <input id="usernameInput" type="text" placeholder="barbaros_room" value="barbaros_room" />
                 </div>
               </div>
+
               <div class="field">
                 <label>E-posta</label>
-                <input id="email" type="email" placeholder="ornek@mail.com" />
+                <input id="emailInput" type="email" placeholder="ornek@mail.com" value="barbaros@example.com" />
               </div>
+
               <div class="field">
                 <label>Şifre</label>
-                <input id="password" type="password" placeholder="En az 6 karakter" />
+                <div class="password-wrap">
+                  <input id="passwordInput" type="password" placeholder="En az 8 karakter" value="12345678" />
+                  <button class="password-toggle" id="passwordToggle">Göster</button>
+                </div>
               </div>
-              <div class="error" id="errorBox"></div>
-              <div class="info">Önce Firebase Console’da Authentication → Email/Password ve Firestore Database’i açman gerekiyor.</div>
-              <button class="primary" id="authBtn">Giriş Yap</button>
+
+              <div class="error" id="authError"></div>
+              <div class="note" id="authNote">Bu sürüm yerel olarak çalışır. Hesabın ve mesajların bu tarayıcıda saklanır.</div>
+
+              <button class="primary-btn" id="submitAuthBtn">Giriş Yap</button>
+              <button class="secondary-btn" id="guestBtn" type="button">Misafir olarak gir</button>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="chat hidden" id="chatScreen">
-        <aside class="sidebar">
+      <section class="chat-screen" id="chatScreen">
+        <aside class="sidebar" id="sidebar">
           <div class="sidebar-top">
-            <div class="identity">
-              <div class="left-id">
-                <div class="avatar" id="myAvatar">BR</div>
-                <div class="meta">
-                  <strong id="myName">Kullanıcı</strong>
-                  <span id="myMail">mail@example.com</span>
+            <div class="row-between">
+              <div class="person">
+                <div class="avatar" id="myAvatar">BA</div>
+                <div class="person-text">
+                  <strong id="myDisplayName">Barbaros</strong>
+                  <span id="mySubtitle">PixelRoom hesabı aktif</span>
                 </div>
               </div>
-              <div class="actions">
-                <button class="icon" id="logoutBtn">⎋</button>
+              <div class="tool-row">
+                <button class="icon-btn" id="themeBtn2">◐</button>
+                <button class="icon-btn" id="logoutBtn">⎋</button>
               </div>
             </div>
           </div>
-          <div class="search">
-            <input id="friendEmail" type="text" placeholder="Arkadaş e-postası ile sohbet başlat" />
+
+          <div class="search-box">
+            <input id="searchInput" type="text" placeholder="Oda, kişi veya mesaj ara" />
+            <div class="quick-actions">
+              <button id="filterAllBtn">Tümü</button>
+              <button id="filterFriendsBtn">Arkadaş</button>
+              <button id="filterRoomsBtn">Odalar</button>
+            </div>
           </div>
-          <div style="padding:0 14px 14px;">
-            <button class="primary" id="startChatBtn" style="width:100%;">Sohbet Başlat</button>
-          </div>
+
           <div class="chat-list" id="chatList"></div>
         </aside>
 
-        <main class="main">
+        <main class="chat-panel mobile-hide" id="chatPanel">
           <div class="chat-top">
-            <div class="identity">
-              <div class="left-id">
-                <div class="avatar" id="activeAvatar">--</div>
-                <div class="meta">
-                  <strong id="activeName">Sohbet seç</strong>
-                  <span id="activeInfo">Henüz aktif sohbet yok</span>
+            <div class="row-between">
+              <div class="chat-header-main">
+                <button class="icon-btn mobile-back" id="backBtn">←</button>
+                <div class="avatar alt-1" id="activeAvatar">ÖM</div>
+                <div class="header-text">
+                  <strong id="activeChatName">Ömer</strong>
+                  <span class="status"><i class="dot"></i><span id="activeChatStatus">şimdi aktif</span></span>
                 </div>
+              </div>
+              <div class="tool-row">
+                <button class="icon-btn">📞</button>
+                <button class="icon-btn">🎥</button>
+                <button class="icon-btn">⋮</button>
               </div>
             </div>
           </div>
+
           <div class="messages" id="messages"></div>
-          <div class="composer">
-            <button class="icon">😊</button>
-            <div class="grow"><input id="messageInput" type="text" placeholder="Mesaj yaz" /></div>
-            <button class="send" id="sendBtn">Gönder</button>
+
+          <div class="composer-wrap">
+            <div class="composer">
+              <button class="icon-btn" id="emojiBtn">😊</button>
+              <button class="icon-btn" id="attachBtn">📎</button>
+              <input id="messageInput" type="text" placeholder="Mesaj yaz" />
+              <button class="send-btn" id="sendBtn">Gönder</button>
+            </div>
+            <div class="composer-note">PixelRoom yerel demo: sayfayı yenilesen de hesap ve mesajlar kalır.</div>
           </div>
-          <div class="subbar">Bu sürüm Firebase’e bağlanır. Rules ayarlanmadan herkese açma.</div>
         </main>
       </section>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc,
-      getDocs,
-      addDoc,
-      updateDoc,
-      collection,
-      query,
-      where,
-      orderBy,
-      serverTimestamp,
-      onSnapshot
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyABqkhpL1SMRzRJ9GQLjjZE2IryqpAvMPw",
-      authDomain: "pixelroom-ae218.firebaseapp.com",
-      databaseURL: "https://pixelroom-ae218-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "pixelroom-ae218",
-      storageBucket: "pixelroom-ae218.firebasestorage.app",
-      messagingSenderId: "720297722320",
-      appId: "1:720297722320:web:c815edae99d1efa7ff39d5",
-      measurementId: "G-HD8901B19M"
+  <script>
+    const storageKeys = {
+      theme: 'pixelroom-theme',
+      user: 'pixelroom-user',
+      chats: 'pixelroom-chats'
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const defaultChats = [
+      {
+        id: 'omer',
+        type: 'friend',
+        name: 'Ömer',
+        subtitle: 'Arkadaş',
+        status: 'şimdi aktif',
+        avatar: 'ÖM',
+        avatarClass: 'alt-1',
+        unread: 2,
+        autoReply: 'Tamamdır, birazdan dönerim.',
+        messages: [
+          { from: 'them', text: 'Akşam oyuna giriyor muyuz?', time: '18:42', status: 'read' },
+          { from: 'me', text: 'Giriyorum. Kenan da gelirse takım tamam.', time: '18:44', status: 'read' },
+          { from: 'them', text: 'Süper, ben ona da yazıyorum.', time: '18:45', status: 'delivered' }
+        ]
+      },
+      {
+        id: 'kenan',
+        type: 'friend',
+        name: 'Kenan',
+        subtitle: 'Arkadaş',
+        status: 'bugün 16:11',
+        avatar: 'KE',
+        avatarClass: 'alt-2',
+        unread: 0,
+        autoReply: 'Olur kanka, haberleşelim.',
+        messages: [
+          { from: 'them', text: 'Yarın okul çıkışı buluşalım mı?', time: '16:02', status: 'read' },
+          { from: 'me', text: 'Olur. Hava iyi olursa dışarı takılırız.', time: '16:05', status: 'read' }
+        ]
+      },
+      {
+        id: 'asya',
+        type: 'friend',
+        name: 'Asya',
+        subtitle: 'Kardeş',
+        status: 'şimdi aktif',
+        avatar: 'AS',
+        avatarClass: 'alt-3',
+        unread: 1,
+        autoReply: 'Tamam, anneme söylüyorum.',
+        messages: [
+          { from: 'them', text: 'Annem seni çağırıyor.', time: '15:31', status: 'read' },
+          { from: 'me', text: 'Tamam geliyorum birazdan.', time: '15:32', status: 'read' },
+          { from: 'them', text: 'Hızlı gel dedi.', time: '15:33', status: 'delivered' }
+        ]
+      },
+      {
+        id: 'ali-erdem',
+        type: 'friend',
+        name: 'Ali Erdem',
+        subtitle: 'Sınıf',
+        status: 'dün 21:07',
+        avatar: 'AE',
+        avatarClass: 'alt-4',
+        unread: 0,
+        autoReply: 'Birazdan bakıp atarım.',
+        messages: [
+          { from: 'them', text: 'Mat ödevini attın mı?', time: 'Dün', status: 'read' },
+          { from: 'me', text: 'Birazdan foto çekip yollarım.', time: 'Dün', status: 'read' }
+        ]
+      },
+      {
+        id: 'pixel-squad',
+        type: 'room',
+        name: 'Pixel Squad',
+        subtitle: 'Oda • 4 kişi',
+        status: '4 kişi çevrim içi',
+        avatar: 'PS',
+        avatarClass: 'alt-5',
+        unread: 4,
+        autoReply: 'Oda not edildi. Akşam tekrar bakarız.',
+        messages: [
+          { from: 'them', text: 'Yeni map baya iyi olmuş bu arada.', time: '12:40', status: 'read' },
+          { from: 'them', text: 'Akşam test edelim mi?', time: '12:41', status: 'read' }
+        ]
+      },
+      {
+        id: 'school-room',
+        type: 'room',
+        name: 'Okul Oda',
+        subtitle: 'Oda • 6 kişi',
+        status: '2 kişi yazıyor',
+        avatar: 'OK',
+        avatarClass: 'alt-6',
+        unread: 0,
+        autoReply: 'Mesaj odaya düştü.',
+        messages: [
+          { from: 'them', text: 'Yarınki ödevleri bu odada toparlayalım.', time: '10:14', status: 'read' },
+          { from: 'me', text: 'Tamam, ben akşam hepsini yazacağım.', time: '10:16', status: 'read' }
+        ]
+      }
+    ];
+
+    let mode = 'login';
+    let filterMode = 'all';
+    let currentUser = null;
+    let chats = [];
+    let activeChatId = null;
 
     const authScreen = document.getElementById('authScreen');
     const chatScreen = document.getElementById('chatScreen');
+    const themeBtn = document.getElementById('themeBtn');
+    const themeBtn2 = document.getElementById('themeBtn2');
     const loginTab = document.getElementById('loginTab');
     const registerTab = document.getElementById('registerTab');
-    const authBtn = document.getElementById('authBtn');
+    const displayNameInput = document.getElementById('displayNameInput');
+    const usernameInput = document.getElementById('usernameInput');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const authError = document.getElementById('authError');
+    const submitAuthBtn = document.getElementById('submitAuthBtn');
+    const guestBtn = document.getElementById('guestBtn');
     const logoutBtn = document.getElementById('logoutBtn');
-    const displayNameInput = document.getElementById('displayName');
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const errorBox = document.getElementById('errorBox');
     const myAvatar = document.getElementById('myAvatar');
-    const myName = document.getElementById('myName');
-    const myMail = document.getElementById('myMail');
-    const friendEmail = document.getElementById('friendEmail');
-    const startChatBtn = document.getElementById('startChatBtn');
+    const myDisplayName = document.getElementById('myDisplayName');
+    const mySubtitle = document.getElementById('mySubtitle');
+    const searchInput = document.getElementById('searchInput');
+    const filterAllBtn = document.getElementById('filterAllBtn');
+    const filterFriendsBtn = document.getElementById('filterFriendsBtn');
+    const filterRoomsBtn = document.getElementById('filterRoomsBtn');
     const chatList = document.getElementById('chatList');
     const activeAvatar = document.getElementById('activeAvatar');
-    const activeName = document.getElementById('activeName');
-    const activeInfo = document.getElementById('activeInfo');
+    const activeChatName = document.getElementById('activeChatName');
+    const activeChatStatus = document.getElementById('activeChatStatus');
     const messages = document.getElementById('messages');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
+    const backBtn = document.getElementById('backBtn');
+    const sidebar = document.getElementById('sidebar');
+    const chatPanel = document.getElementById('chatPanel');
+    const usernameField = document.getElementById('usernameField');
 
-    let mode = 'login';
-    let currentUser = null;
-    let activeChatId = null;
-    let chatsUnsub = null;
-    let messagesUnsub = null;
-
-    function showError(text) {
-      errorBox.textContent = text;
-      errorBox.classList.add('show');
+    function nowTime() {
+      return new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
     }
 
-    function hideError() {
-      errorBox.textContent = '';
-      errorBox.classList.remove('show');
+    function initials(text) {
+      return text.trim().split(' ').slice(0, 2).map(x => x[0]).join('').toUpperCase() || 'PR';
+    }
+
+    function saveTheme(isLight) {
+      localStorage.setItem(storageKeys.theme, isLight ? 'light' : 'dark');
+    }
+
+    function loadTheme() {
+      const theme = localStorage.getItem(storageKeys.theme);
+      if (theme === 'light') document.body.classList.add('light');
+    }
+
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('light');
+      saveTheme(isLight);
+    }
+
+    function showError(text) {
+      authError.textContent = text;
+      authError.classList.add('show');
+    }
+
+    function clearError() {
+      authError.textContent = '';
+      authError.classList.remove('show');
     }
 
     function setMode(nextMode) {
       mode = nextMode;
-      loginTab.classList.toggle('active', nextMode === 'login');
-      registerTab.classList.toggle('active', nextMode === 'register');
-      authBtn.textContent = nextMode === 'login' ? 'Giriş Yap' : 'Kayıt Ol';
+      const register = mode === 'register';
+      loginTab.classList.toggle('active', !register);
+      registerTab.classList.toggle('active', register);
+      submitAuthBtn.textContent = register ? 'Kayıt Ol' : 'Giriş Yap';
+      usernameField.classList.toggle('hidden', !register);
+      clearError();
     }
 
-    loginTab.onclick = () => setMode('login');
-    registerTab.onclick = () => setMode('register');
-
-    async function saveUserProfile(user, displayName, username) {
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        displayName,
-        username: username.toLowerCase(),
-        email: user.email,
-        createdAt: serverTimestamp()
-      }, { merge: true });
+    function saveUser() {
+      localStorage.setItem(storageKeys.user, JSON.stringify(currentUser));
     }
 
-    authBtn.onclick = async () => {
-      hideError();
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      const displayName = displayNameInput.value.trim();
-      const username = usernameInput.value.trim();
+    function saveChats() {
+      localStorage.setItem(storageKeys.chats, JSON.stringify(chats));
+    }
 
-      try {
-        if (!email.includes('@')) throw new Error('Geçerli bir e-posta gir.');
-        if (password.length < 6) throw new Error('Şifre en az 6 karakter olmalı.');
-
-        if (mode === 'register') {
-          if (!displayName) throw new Error('Görünen ad boş olamaz.');
-          if (!username) throw new Error('Kullanıcı adı boş olamaz.');
-          const result = await createUserWithEmailAndPassword(auth, email, password);
-          await saveUserProfile(result.user, displayName, username);
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-        }
-      } catch (err) {
-        showError(err.message || 'Bir hata oluştu.');
+    function loadChats() {
+      const saved = localStorage.getItem(storageKeys.chats);
+      if (saved) {
+        try {
+          chats = JSON.parse(saved);
+          return;
+        } catch (e) {}
       }
-    };
-
-    logoutBtn.onclick = async () => {
-      await signOut(auth);
-    };
-
-    async function getProfile(uid) {
-      const snap = await getDoc(doc(db, 'users', uid));
-      return snap.exists() ? snap.data() : null;
+      chats = JSON.parse(JSON.stringify(defaultChats));
+      saveChats();
     }
 
-    function chatIdFor(uid1, uid2) {
-      return [uid1, uid2].sort().join('_');
+    function loadUser() {
+      const saved = localStorage.getItem(storageKeys.user);
+      if (!saved) return null;
+      try { return JSON.parse(saved); } catch (e) { return null; }
     }
 
-    async function startChatWithEmail() {
-      if (!currentUser) return;
-      const targetEmail = friendEmail.value.trim().toLowerCase();
-      if (!targetEmail || !targetEmail.includes('@')) return showError('Arkadaş e-postasını düzgün gir.');
-      if (targetEmail === currentUser.email.toLowerCase()) return showError('Kendinle sohbet açamazsın.');
-
-      hideError();
-      const q = query(collection(db, 'users'), where('email', '==', targetEmail));
-      const res = await getDocs(q);
-      if (res.empty) return showError('Bu e-postaya ait kullanıcı bulunamadı.');
-
-      const target = res.docs[0].data();
-      const chatId = chatIdFor(currentUser.uid, target.uid);
-      await setDoc(doc(db, 'chats', chatId), {
-        members: [currentUser.uid, target.uid].sort(),
-        memberEmails: [currentUser.email.toLowerCase(), target.email.toLowerCase()].sort(),
-        memberNames: {
-          [currentUser.uid]: currentUser.profile.displayName,
-          [target.uid]: target.displayName
-        },
-        updatedAt: serverTimestamp(),
-        lastMessage: ''
-      }, { merge: true });
-
-      activeChatId = chatId;
-      openMessages(chatId);
-      friendEmail.value = '';
+    function markActiveRead() {
+      const chat = chats.find(c => c.id === activeChatId);
+      if (!chat) return;
+      chat.unread = 0;
+      saveChats();
     }
 
-    startChatBtn.onclick = startChatWithEmail;
+    function filteredChats() {
+      const q = searchInput.value.trim().toLowerCase();
+      return chats.filter(chat => {
+        const filterPass = filterMode === 'all' || chat.type === filterMode;
+        const textPass = !q || chat.name.toLowerCase().includes(q) || chat.subtitle.toLowerCase().includes(q) || chat.messages.some(msg => msg.text.toLowerCase().includes(q));
+        return filterPass && textPass;
+      });
+    }
 
-    function renderChatList(items) {
+    function lastMessage(chat) {
+      return chat.messages[chat.messages.length - 1] || null;
+    }
+
+    function statusTicks(status) {
+      if (status === 'read') return '✓✓';
+      if (status === 'delivered') return '✓✓';
+      return '✓';
+    }
+
+    function renderFilterButtons() {
+      filterAllBtn.style.background = filterMode === 'all' ? 'rgba(37,211,102,0.14)' : 'rgba(255,255,255,0.04)';
+      filterFriendsBtn.style.background = filterMode === 'friend' ? 'rgba(37,211,102,0.14)' : 'rgba(255,255,255,0.04)';
+      filterRoomsBtn.style.background = filterMode === 'room' ? 'rgba(37,211,102,0.14)' : 'rgba(255,255,255,0.04)';
+    }
+
+    function renderChatList() {
       chatList.innerHTML = '';
-      if (!items.length) {
-        chatList.innerHTML = '<div style="padding:14px;color:var(--muted);font-size:14px;line-height:1.7;">Henüz sohbet yok. Arkadaşının e-postasını yazıp sohbet başlat.</div>';
+      renderFilterButtons();
+      const list = filteredChats();
+      if (!list.length) {
+        const empty = document.createElement('div');
+        empty.style.padding = '18px';
+        empty.style.color = 'var(--muted)';
+        empty.textContent = 'Sonuç bulunamadı.';
+        chatList.appendChild(empty);
         return;
       }
 
-      items.forEach(item => {
-        const otherUid = item.members.find(uid => uid !== currentUser.uid);
-        const otherName = item.memberNames?.[otherUid] || 'Kullanıcı';
-        const btn = document.createElement('button');
-        btn.className = 'chat-item' + (item.id === activeChatId ? ' active' : '');
-        btn.innerHTML = `
-          <div class="chat-row">
-            <div class="small-avatar">${otherName.slice(0,2).toUpperCase()}</div>
-            <div class="chat-text">
-              <strong>${otherName}</strong>
-              <small>Özel sohbet</small>
-              <p>${item.lastMessage || 'Henüz mesaj yok'}</p>
+      list.forEach(chat => {
+        const last = lastMessage(chat);
+        const item = document.createElement('button');
+        item.className = 'chat-item' + (chat.id === activeChatId ? ' active' : '');
+        item.innerHTML = `
+          <div class="chat-item-inner">
+            <div class="avatar ${chat.avatarClass}">${chat.avatar}</div>
+            <div class="chat-preview">
+              <strong>${chat.name}</strong>
+              <small>${chat.subtitle}</small>
+              <p>${last ? last.text : ''}</p>
+            </div>
+            <div class="chat-side">
+              <span class="chat-time">${last ? last.time : ''}</span>
+              ${chat.unread > 0 ? `<span class="unread">${chat.unread}</span>` : ''}
             </div>
           </div>
         `;
-        btn.onclick = () => {
-          activeChatId = item.id;
-          openMessages(item.id);
-          renderSidebarLive();
+        item.onclick = () => {
+          activeChatId = chat.id;
+          markActiveRead();
+          renderAll();
+          if (window.innerWidth <= 820) {
+            sidebar.classList.add('mobile-hide');
+            chatPanel.classList.remove('mobile-hide');
+          }
         };
-        chatList.appendChild(btn);
+        chatList.appendChild(item);
       });
     }
 
-    let cachedChats = [];
-    function renderSidebarLive() {
-      renderChatList(cachedChats);
-    }
+    function renderMessages() {
+      const chat = chats.find(c => c.id === activeChatId) || chats[0];
+      if (!chat) return;
+      activeChatId = chat.id;
+      activeAvatar.textContent = chat.avatar;
+      activeAvatar.className = `avatar ${chat.avatarClass}`;
+      activeChatName.textContent = chat.name;
+      activeChatStatus.textContent = chat.status;
+      messages.innerHTML = '';
 
-    function watchChats() {
-      if (chatsUnsub) chatsUnsub();
-      const q = query(collection(db, 'chats'), where('members', 'array-contains', currentUser.uid));
-      chatsUnsub = onSnapshot(q, (snap) => {
-        const items = snap.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => {
-            const at = a.updatedAt?.seconds || 0;
-            const bt = b.updatedAt?.seconds || 0;
-            return bt - at;
-          });
-        cachedChats = items;
-        if (!activeChatId && items.length) activeChatId = items[0].id;
-        renderSidebarLive();
-        if (activeChatId) openMessages(activeChatId);
+      const sep = document.createElement('div');
+      sep.className = 'day-sep';
+      sep.textContent = 'Bugün';
+      messages.appendChild(sep);
+
+      chat.messages.forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = `msg ${msg.from}`;
+        bubble.innerHTML = `
+          <div>${msg.text}</div>
+          <div class="meta">
+            <span>${msg.time}</span>
+            ${msg.from === 'me' ? `<span>${statusTicks(msg.status)}</span>` : ''}
+          </div>
+        `;
+        messages.appendChild(bubble);
       });
+
+      messages.scrollTop = messages.scrollHeight;
     }
 
-    async function openMessages(chatId) {
-      if (!chatId || !currentUser) return;
-      const chatSnap = await getDoc(doc(db, 'chats', chatId));
-      if (!chatSnap.exists()) return;
-      const chat = { id: chatSnap.id, ...chatSnap.data() };
-      const otherUid = chat.members.find(uid => uid !== currentUser.uid);
-      const otherName = chat.memberNames?.[otherUid] || 'Kullanıcı';
-      activeName.textContent = otherName;
-      activeAvatar.textContent = otherName.slice(0,2).toUpperCase();
-      activeInfo.textContent = 'Özel sohbet';
-
-      if (messagesUnsub) messagesUnsub();
-      const mq = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
-      messagesUnsub = onSnapshot(mq, (snap) => {
-        messages.innerHTML = '';
-        snap.docs.forEach(d => {
-          const msg = d.data();
-          const div = document.createElement('div');
-          div.className = 'msg ' + (msg.uid === currentUser.uid ? 'me' : 'them');
-          const time = msg.createdAt?.toDate
-            ? msg.createdAt.toDate().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-            : '--:--';
-          div.innerHTML = `
-            <div>${msg.text}</div>
-            <div class="msg-meta">
-              <span>${time}</span>
-              ${msg.uid === currentUser.uid ? '<span>✓</span>' : ''}
-            </div>
-          `;
-          messages.appendChild(div);
-        });
-        messages.scrollTop = messages.scrollHeight;
-      });
+    function renderUser() {
+      if (!currentUser) return;
+      myAvatar.textContent = initials(currentUser.displayName);
+      myDisplayName.textContent = currentUser.displayName;
+      mySubtitle.textContent = currentUser.username ? '@' + currentUser.username : 'Misafir hesap aktif';
     }
 
-    async function sendMessage() {
-      if (!activeChatId || !currentUser) return showError('Önce bir sohbet seç.');
+    function renderAll() {
+      renderUser();
+      renderChatList();
+      renderMessages();
+    }
+
+    function fakeReply(chat) {
+      if (!chat) return;
+      const lines = [
+        chat.autoReply,
+        'Tamam, bunu PixelRoom odasına not düştüm.',
+        'Olur, sonra tekrar yazalım.',
+        'Gördüm, birazdan detaylı dönerim.'
+      ];
+      const text = lines[Math.floor(Math.random() * lines.length)];
+      setTimeout(() => {
+        chat.messages.push({ from: 'them', text, time: nowTime(), status: 'delivered' });
+        if (chat.id !== activeChatId) chat.unread += 1;
+        saveChats();
+        renderAll();
+      }, 900 + Math.random() * 900);
+    }
+
+    function sendMessage() {
       const text = messageInput.value.trim();
       if (!text) return;
-
-      await addDoc(collection(db, 'chats', activeChatId, 'messages'), {
-        text,
-        uid: currentUser.uid,
-        senderName: currentUser.profile.displayName,
-        createdAt: serverTimestamp()
-      });
-
-      await updateDoc(doc(db, 'chats', activeChatId), {
-        lastMessage: text,
-        updatedAt: serverTimestamp()
-      });
-
+      const chat = chats.find(c => c.id === activeChatId);
+      if (!chat) return;
+      chat.messages.push({ from: 'me', text, time: nowTime(), status: 'sent' });
       messageInput.value = '';
+      saveChats();
+      renderAll();
+      fakeReply(chat);
     }
 
+    function enterApp() {
+      authScreen.style.display = 'none';
+      chatScreen.style.display = 'grid';
+      if (!activeChatId && chats.length) activeChatId = chats[0].id;
+      renderAll();
+      if (window.innerWidth <= 820) {
+        sidebar.classList.remove('mobile-hide');
+        chatPanel.classList.add('mobile-hide');
+      }
+    }
+
+    function handleAuth() {
+      const displayName = displayNameInput.value.trim();
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!displayName) return showError('Görünen ad boş kalamaz.');
+      if (!email.includes('@') || email.length < 6) return showError('Geçerli bir e-posta gir.');
+      if (password.length < 8) return showError('Şifre en az 8 karakter olmalı.');
+      if (mode === 'register' && username.length < 3) return showError('Kullanıcı adı en az 3 karakter olmalı.');
+
+      clearError();
+      currentUser = {
+        displayName,
+        username: mode === 'register' ? username : username || displayName.toLowerCase().replace(/\s+/g, '_'),
+        email,
+        createdAt: Date.now(),
+        guest: false
+      };
+      saveUser();
+      if (!localStorage.getItem(storageKeys.chats)) {
+        chats = JSON.parse(JSON.stringify(defaultChats));
+        saveChats();
+      }
+      loadChats();
+      if (!activeChatId && chats.length) activeChatId = chats[0].id;
+      enterApp();
+    }
+
+    function guestLogin() {
+      currentUser = {
+        displayName: 'Misafir Oyuncu',
+        username: 'guest_pixel',
+        email: 'guest@pixelroom.local',
+        createdAt: Date.now(),
+        guest: true
+      };
+      saveUser();
+      if (!localStorage.getItem(storageKeys.chats)) {
+        chats = JSON.parse(JSON.stringify(defaultChats));
+        saveChats();
+      }
+      loadChats();
+      if (!activeChatId && chats.length) activeChatId = chats[0].id;
+      enterApp();
+    }
+
+    function logout() {
+      chatScreen.style.display = 'none';
+      authScreen.style.display = 'grid';
+    }
+
+    function init() {
+      loadTheme();
+      loadChats();
+      const savedUser = loadUser();
+      if (savedUser) {
+        currentUser = savedUser;
+        activeChatId = chats[0]?.id || null;
+        enterApp();
+      } else {
+        setMode('login');
+      }
+    }
+
+    themeBtn.onclick = toggleTheme;
+    themeBtn2.onclick = toggleTheme;
+    loginTab.onclick = () => setMode('login');
+    registerTab.onclick = () => setMode('register');
+    submitAuthBtn.onclick = handleAuth;
+    guestBtn.onclick = guestLogin;
+    logoutBtn.onclick = logout;
+    passwordToggle.onclick = () => {
+      const hidden = passwordInput.type === 'password';
+      passwordInput.type = hidden ? 'text' : 'password';
+      passwordToggle.textContent = hidden ? 'Gizle' : 'Göster';
+    };
+    searchInput.oninput = renderChatList;
+    filterAllBtn.onclick = () => { filterMode = 'all'; renderChatList(); };
+    filterFriendsBtn.onclick = () => { filterMode = 'friend'; renderChatList(); };
+    filterRoomsBtn.onclick = () => { filterMode = 'room'; renderChatList(); };
     sendBtn.onclick = sendMessage;
     messageInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') sendMessage();
     });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        currentUser = null;
-        authScreen.classList.remove('hidden');
-        chatScreen.classList.add('hidden');
-        if (chatsUnsub) chatsUnsub();
-        if (messagesUnsub) messagesUnsub();
-        return;
+    backBtn.onclick = () => {
+      sidebar.classList.remove('mobile-hide');
+      chatPanel.classList.add('mobile-hide');
+    };
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 820) {
+        sidebar.classList.remove('mobile-hide');
+        chatPanel.classList.remove('mobile-hide');
       }
-
-      const profile = await getProfile(user.uid);
-      currentUser = {
-        ...user,
-        profile: profile || {
-          displayName: user.email.split('@')[0],
-          username: user.email.split('@')[0],
-          email: user.email
-        }
-      };
-
-      myName.textContent = currentUser.profile.displayName;
-      myMail.textContent = user.email;
-      myAvatar.textContent = currentUser.profile.displayName.slice(0,2).toUpperCase();
-
-      authScreen.classList.add('hidden');
-      chatScreen.classList.remove('hidden');
-      watchChats();
     });
+
+    init();
   </script>
 </body>
 </html>
+
