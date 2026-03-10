@@ -675,6 +675,35 @@
       typingTimer = setTimeout(() => remove(tRef), 1200);
     }
 
+    function censorProfanity(text){
+
+  const banned = [
+  "amk","aq","amq","mk","oc","oç","orospu","orospuçocuğu","orospu cocugu",
+  "piç","pic","sik","sikerim","siktir","siktirgit","yarak","yarrak",
+  "ibne","göt","got","amına","amina","amcık","amcik",
+  "pezevenk","puşt","pust","ananı","anani","bacını","bacini",
+  "kahpe","salak","aptal"
+  ]
+
+  let result = text
+
+  for(const word of banned){
+
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")
+    const regex = new RegExp(`\\b${escaped}\\b`,"gi")
+
+    result = result.replace(regex,(match)=>{
+
+      if(match.length <= 2) return "*".repeat(match.length)
+
+      return match[0] + "*".repeat(match.length-2) + match[match.length-1]
+
+    })
+
+  }
+
+  return result
+}
     async function sendMessage(){
       const text = els.messageInput.value.trim();
       if(!text || !activeChatId || !myProfile) return;
@@ -752,6 +781,32 @@
       }
     });
 
+    async function requestNotificationPermission(){
+
+if(!("Notification" in window)) return
+
+if(Notification.permission === "default"){
+await Notification.requestPermission()
+}
+
+}
+
+function sendBrowserNotification(title,body){
+
+if(!("Notification" in window)) return
+if(Notification.permission !== "granted") return
+
+const n = new Notification(title,{
+body:body,
+icon:"https://cdn-icons-png.flaticon.com/512/2462/2462719.png"
+})
+
+n.onclick = ()=>{
+window.focus()
+n.close()
+}
+
+}
     (async function init(){
       try{
         await ensureAuth();
