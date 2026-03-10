@@ -27,30 +27,39 @@
     button,input,textarea{font:inherit}
 
     .app{
-  height:100vh;
-  display:grid;
-  grid-template-columns:360px 1fr;
-  min-height:0;
-}
+      height:100vh;
+      display:grid;
+      grid-template-columns:360px 1fr;
+      min-height:0;
+    }
 
-.sidebar{
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-  min-height:0;
-}
+    .sidebar{
+      background:var(--panel);
+      border-right:1px solid var(--line);
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      min-height:0;
+    }
 
-.chat-area{
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-  min-height:0;
-  background:linear-gradient(180deg,#0b141a,#111b21);
-}
+    .chat-area{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      min-height:0;
+      background:linear-gradient(180deg,#0b141a,#111b21);
+    }
 
-    .top{padding:14px 16px;background:var(--panel-2);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+    .top{
+      padding:14px 16px;
+      background:var(--panel-2);
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
     .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#00a884,#1f8fff);font-weight:800;color:#fff;flex-shrink:0}
     .meta{min-width:0}
     .meta h2,.meta h3{margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -71,10 +80,15 @@
     .danger{background:rgba(255,95,95,.12);color:#ff9f9f;border:1px solid rgba(255,95,95,.22);border-radius:12px;padding:12px 14px}
     .primary:disabled,.secondary:disabled,.danger:disabled,.send-btn:disabled{opacity:.55;cursor:not-allowed}
 
-    .search-wrap{padding:10px;border-bottom:1px solid var(--line)}
+    .search-wrap{padding:10px;border-bottom:1px solid var(--line);flex-shrink:0}
     .search{width:100%;background:#202c33;border:none;color:var(--text);padding:12px 14px;border-radius:10px;outline:none}
 
-    .chat-list{flex:1;overflow:auto}
+    .chat-list{
+      flex:1;
+      overflow:auto;
+      min-height:0;
+    }
+
     .chat-item{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:.15s}
     .chat-item:hover,.chat-item.active{background:#1f2c34}
     .chat-item .text{min-width:0;flex:1}
@@ -86,18 +100,19 @@
     .welcome h1{color:var(--text);margin-top:0}
 
     .messages{
-  flex:1;
-  min-height:0;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  background-image:radial-gradient(rgba(255,255,255,.02) 1px, transparent 1px);
-  background-size:20px 20px;
-  -webkit-overflow-scrolling:touch;
-}
+      flex:1;
+      min-height:0;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      background-image:radial-gradient(rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size:20px 20px;
+      -webkit-overflow-scrolling:touch;
+    }
+
     .msg-wrap{display:flex;flex-direction:column;max-width:75%}
     .msg-wrap.me{align-self:flex-end;align-items:flex-end}
     .msg-wrap.other{align-self:flex-start;align-items:flex-start}
@@ -107,29 +122,46 @@
     .msg-name{font-size:12px;color:#88d7c4;margin:0 0 5px;font-weight:700}
     .msg-meta{font-size:11px;color:#b7c4cb;margin-top:6px;text-align:right}
 
-    .typing{min-height:18px;padding:8px 18px 0;color:var(--soft);font-size:12px}
-    .composer{padding:10px 14px 14px;background:var(--panel-2);border-top:1px solid var(--line);display:flex;gap:10px;align-items:flex-end}
+    .typing{
+      min-height:18px;
+      padding:8px 18px 0;
+      color:var(--soft);
+      font-size:12px;
+      flex-shrink:0;
+    }
+
+    .composer{
+      padding:10px 14px 14px;
+      background:var(--panel-2);
+      border-top:1px solid var(--line);
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      flex-shrink:0;
+    }
+
     .composer textarea{flex:1;min-height:52px;max-height:140px;resize:none;background:#2a3942;color:var(--text);border:1px solid transparent;border-radius:14px;padding:14px;outline:none}
     .send-btn{width:52px;height:52px;border-radius:14px;background:var(--accent);color:#fff;font-size:20px;font-weight:800;box-shadow:var(--shadow)}
 
     .badge{padding:5px 10px;border-radius:999px;background:rgba(0,168,132,.12);color:#81e6d0;font-size:12px;border:1px solid rgba(0,168,132,.2)}
-    .hidden{display:none !important} 
+    .hidden{display:none !important}
+
     .messages::-webkit-scrollbar{
-  width: 8px;
-}
+      width:8px;
+    }
 
-.messages::-webkit-scrollbar-track{
-  background: transparent;
-}
+    .messages::-webkit-scrollbar-track{
+      background:transparent;
+    }
 
-.messages::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,0.18);
-  border-radius: 999px;
-}
+    .messages::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,0.18);
+      border-radius:999px;
+    }
 
-.messages::-webkit-scrollbar-thumb:hover{
-  background: rgba(255,255,255,0.28);
-}
+    .messages::-webkit-scrollbar-thumb:hover{
+      background:rgba(255,255,255,0.28);
+    }
 
     @media (max-width:900px){
       .app{grid-template-columns:1fr}
@@ -181,7 +213,7 @@
         <p>Önce profilini kaydet. Sonra arkadaşının kullanıcı adını yazıp sohbet aç. Arkadaşın da aynı sistemi kullanmalı.</p>
       </div>
 
-      <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%">
+      <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
         <div class="top">
           <button id="backBtn" class="icon-btn hidden">←</button>
           <div id="chatAvatar" class="avatar">?</div>
